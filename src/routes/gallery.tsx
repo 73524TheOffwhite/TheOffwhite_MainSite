@@ -49,6 +49,9 @@ import desiMuttonCurry from "@/assets/dish-desi-mutton-curry.jpg";
 import galleryEventsToast from "@/assets/gallery-events-toast.jpg";
 
 export const Route = createFileRoute("/gallery")({
+  validateSearch: (search: Record<string, unknown>): { cat?: string } => ({
+    cat: typeof search.cat === "string" ? search.cat : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Gallery — The Off White" },
@@ -63,6 +66,23 @@ export const Route = createFileRoute("/gallery")({
 const ease = [0.22, 1, 0.36, 1] as const;
 
 type Cat = GalleryCat;
+
+function parseGalleryCat(value: unknown): Cat | undefined {
+  if (typeof value !== "string") return undefined;
+  const key = value.trim().toLowerCase().replace(/[_-]+/g, " ");
+  const aliases: Record<string, Cat> = {
+    all: "All",
+    "level 4": "Level 4",
+    level4: "Level 4",
+    "level 5": "Level 5",
+    level5: "Level 5",
+    food: "Food",
+    events: "Events",
+    "360 view": "360 View",
+    "360view": "360 View",
+  };
+  return aliases[key];
+}
 
 const filters: { key: Cat; label: string }[] = DEFAULT_FILTERS;
 
@@ -259,6 +279,7 @@ function getVisibleItems(
 }
 
 function GalleryPage() {
+  const { cat: catSearch } = Route.useSearch();
   const { data: cms } = useGalleryCms();
 
   const items = useMemo(
@@ -286,9 +307,13 @@ function GalleryPage() {
   const headerHeadline = cms?.header.headline ?? "Moments, captured.";
   const expandLabel = cms?.toggle.expandLabel ?? "View Full Gallery";
   const collapseLabel = cms?.toggle.collapseLabel ?? "Show Less";
-  const [cat, setCat] = useState<Cat>("All");
+  const [cat, setCat] = useState<Cat>(() => parseGalleryCat(catSearch) ?? "All");
   const [expanded, setExpanded] = useState(false);
   const [open, setOpen] = useState<string | null>(null);
+
+  useEffect(() => {
+    setCat(parseGalleryCat(catSearch) ?? "All");
+  }, [catSearch]);
 
   const filtered = cat === "All" ? items : items.filter((i) => i.cat === cat);
   const visible = getVisibleItems(cat, filtered, expanded, cms?.previewSets, itemById);

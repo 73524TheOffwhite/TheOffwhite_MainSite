@@ -52,7 +52,8 @@ export const founderProfiles: FounderProfile[] = [
     name: "Chef Santhosh Kumar Salapu",
     role: "Head Chef & Culinary Curator",
     imageUrl: chefSanthoshImg,
-    mobileObjectPosition: "center 22%",
+    mobileObjectPosition: "center top",
+    desktopObjectPosition: "center top",
     paragraphs: [
       "Chef Santhosh Kumar Salapu is the brilliant hands and creative force in the kitchen. A dedicated bodybuilder with an athlete's discipline and a chef's soul, he brings precision, passion, and international pedigree to every plate.",
       "His foundation was laid early. He holds a degree in Hotel Management from Vishakhapatnam, where he quickly distinguished himself as a rising talent, winning multiple prizes in intercollegiate chef competitions. In his early twenties, he made his bones in the demanding French galley of a cruise liner before moving to a leading airport hotel in Dubai. These formative years honed his ability to deliver high standards, master diverse cuisines, and maintain consistent excellence under intense pressure.",
@@ -79,3 +80,26 @@ export const founderStoryClosing = [
 ];
 
 export const founderSocialHandles = ["@offwhitegoa", "@thewhitegoa"] as const;
+
+export function founderSlug(name: string) {
+  return name
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+export function getFounderBySlug(slug: string) {
+  return founderProfiles.find((profile) => founderSlug(profile.name) === slug);
+}
+
+export function getFounderNeighbors(slug: string) {
+  const index = founderProfiles.findIndex((profile) => founderSlug(profile.name) === slug);
+  if (index < 0) return { prev: null, next: null, index: -1 };
+  return {
+    index,
+    prev: index > 0 ? founderProfiles[index - 1] : null,
+    next: index < founderProfiles.length - 1 ? founderProfiles[index + 1] : null,
+  };
+}

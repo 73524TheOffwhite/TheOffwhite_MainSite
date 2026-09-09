@@ -7,9 +7,42 @@ import { useTestimonials } from "@/lib/testimonials";
 import { useHomepageCms } from "@/lib/homepage-cms";
 import { cmsSrc } from "@/lib/cms-src";
 import { TESTIMONIALS_INITIAL_VISIBLE } from "@/lib/elfsight-google-reviews";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 
 const PAGE_SIZE = TESTIMONIALS_INITIAL_VISIBLE;
 const FADE_MS = 280;
+
+type ReviewCardProps = {
+  quote: string;
+  author: string;
+  meta?: string | null;
+  postedWhen?: string | null;
+  rating: number;
+};
+
+function ReviewCard({ quote, author, meta, postedWhen, rating }: ReviewCardProps) {
+  return (
+    <figure className="flex h-full min-h-[320px] flex-col overflow-hidden bg-[var(--cream-warm)] p-8 lg:min-h-[360px] lg:p-9 rounded-sm transition-transform hover:-translate-y-1 duration-500">
+      <Quote className="shrink-0 text-[var(--gold)]" size={24} />
+      <div className="mt-4 flex shrink-0 items-center gap-1 text-[var(--gold)]">
+        {Array.from({ length: Math.max(1, rating) }).map((_, k) => (
+          <Star key={k} size={13} fill="currentColor" strokeWidth={0} />
+        ))}
+      </div>
+      <blockquote className="mt-4 min-h-[9.5rem] flex-1 overflow-hidden italic text-[var(--ink-muted)] leading-[1.85] text-[14.5px] line-clamp-7">
+        {quote}
+      </blockquote>
+      <figcaption className="mt-auto shrink-0 pt-6">
+        <p className="truncate text-sm text-[var(--ink)]">{author}</p>
+        {(meta || postedWhen) && (
+          <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-[var(--ink-muted)]">
+            {[meta, postedWhen].filter(Boolean).join(" · ")}
+          </p>
+        )}
+      </figcaption>
+    </figure>
+  );
+}
 
 export function Testimonials() {
   const { testimonials, googleReviewsUrl } = useTestimonials();
@@ -63,7 +96,33 @@ export function Testimonials() {
           <p className="mt-3 text-sm text-[var(--ink-muted)]">{ratingLine}</p>
         </Reveal>
 
-        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:items-stretch">
+        {/* Mobile: one card at a time, swipe to slide */}
+        <div className="mt-14 sm:hidden">
+          <Carousel
+            key={page}
+            opts={{ align: "start", loop: false }}
+            className={`w-full transition-opacity duration-300 ease-out ${
+              visible ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <CarouselContent className="-ml-0">
+              {pageReviews.map((r) => (
+                <CarouselItem key={`${page}-${r.id}`} className="basis-full pl-0">
+                  <ReviewCard
+                    quote={r.quote}
+                    author={r.author}
+                    meta={r.meta}
+                    postedWhen={r.postedWhen}
+                    rating={r.rating}
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
+        </div>
+
+        {/* Tablet / desktop: unchanged grid */}
+        <div className="mt-14 hidden grid-cols-1 gap-6 sm:grid sm:grid-cols-2 lg:grid-cols-3 lg:items-stretch">
           {pageReviews.map((r) => (
             <div
               key={`${page}-${r.id}`}
@@ -71,25 +130,13 @@ export function Testimonials() {
                 visible ? "opacity-100" : "opacity-0"
               }`}
             >
-              <figure className="flex h-full min-h-[320px] flex-col overflow-hidden bg-[var(--cream-warm)] p-8 lg:min-h-[360px] lg:p-9 rounded-sm transition-transform hover:-translate-y-1 duration-500">
-                <Quote className="shrink-0 text-[var(--gold)]" size={24} />
-                <div className="mt-4 flex shrink-0 items-center gap-1 text-[var(--gold)]">
-                  {Array.from({ length: Math.max(1, r.rating) }).map((_, k) => (
-                    <Star key={k} size={13} fill="currentColor" strokeWidth={0} />
-                  ))}
-                </div>
-                <blockquote className="mt-4 min-h-[9.5rem] flex-1 overflow-hidden italic text-[var(--ink-muted)] leading-[1.85] text-[14.5px] line-clamp-7">
-                  {r.quote}
-                </blockquote>
-                <figcaption className="mt-auto shrink-0 pt-6">
-                  <p className="truncate text-sm text-[var(--ink)]">{r.author}</p>
-                  {(r.meta || r.postedWhen) && (
-                    <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-[var(--ink-muted)]">
-                      {[r.meta, r.postedWhen].filter(Boolean).join(" · ")}
-                    </p>
-                  )}
-                </figcaption>
-              </figure>
+              <ReviewCard
+                quote={r.quote}
+                author={r.author}
+                meta={r.meta}
+                postedWhen={r.postedWhen}
+                rating={r.rating}
+              />
             </div>
           ))}
 

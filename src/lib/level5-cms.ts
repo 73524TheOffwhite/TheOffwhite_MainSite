@@ -9,7 +9,7 @@ export type Level5Cms = {
   };
   features: Array<{
     id: string;
-    icon: "guests" | "arch" | "sun" | "custom";
+    icon: "guests" | "arch" | "sun" | "dining" | "custom";
     title: string;
     body: string;
     customIconUrl?: string;
@@ -55,7 +55,7 @@ type CmsMedia = { name?: string; path?: string; previewUrl?: string };
 type Level5Sections = {
   features?: Array<{
     id: string;
-    icon: "guests" | "arch" | "sun" | "custom";
+    icon: "guests" | "arch" | "sun" | "dining" | "custom";
     title: string;
     body: string;
     customIcon?: CmsMedia;

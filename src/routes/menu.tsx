@@ -261,13 +261,21 @@ function MenuPage() {
                   whileHover={{ y: -4 }}
                   className="group text-left cursor-pointer"
                 >
-                  <div className="overflow-hidden rounded-lg bg-[var(--cream-warm)] transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:shadow-[0_30px_60px_-25px_rgba(43,33,24,0.35)] group-hover:scale-[1.02]">
+                  <div className="relative overflow-hidden rounded-lg bg-[var(--cream-warm)] transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:shadow-[0_30px_60px_-25px_rgba(43,33,24,0.35)] group-hover:scale-[1.02]">
                     <img
                       src={d.image}
                       alt={d.name}
                       loading="lazy"
                       className="aspect-[4/5] w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.06]"
                     />
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 flex items-center justify-center bg-[var(--ink)]/45 opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100"
+                    >
+                      <span className="border border-white/70 px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.28em] text-white">
+                        Order now
+                      </span>
+                    </div>
                   </div>
                   <div className="mt-5">
                     <h3 className="font-serif text-lg sm:text-xl text-[var(--ink)] leading-snug">{d.name}</h3>
@@ -280,7 +288,7 @@ function MenuPage() {
 
           <div className="mt-16 text-center">
             {/* <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">All prices in INR, exclusive of taxes</p> */}
-            <ReserveTableLink className="btn-primary mt-8">Reserve a Table</ReserveTableLink>
+            <ReserveTableLink className="btn-outline mt-8">Reserve a Table</ReserveTableLink>
           </div>
         </div>
       </section>

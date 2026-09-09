@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Reveal } from "@/components/Reveal";
+import { ReserveTableLink } from "@/components/ReserveTableLink";
 import { level4Description } from "@/data/levels";
 import { useLevel4Cms } from "@/lib/level4-cms";
 import { cmsSrc } from "@/lib/cms-src";
@@ -9,6 +10,9 @@ import { cmsSrc } from "@/lib/cms-src";
 import spaceLevel4Interior from "@/assets/space-level4-interior.jpg";
 import spaceBrand from "@/assets/space-brand.jpg";
 import kitchenBarLevel4 from "@/assets/kitchen-bar-level4.jpg";
+import galleryL4Dining from "../offwhite images/ChatGPT Image Jun 19, 2026, 05_29_19 PM.jpg";
+import galleryL4Lounge from "../offwhite images/ChatGPT Image Jun 19, 2026, 04_52_45 PM.jpg";
+import galleryL4Bar from "../offwhite images/ChatGPT Image Jun 19, 2026, 04_49_41 PM.jpg";
 
 export const Route = createFileRoute("/level-4-dining")({
   head: () => ({
@@ -350,6 +354,8 @@ function Level4Page() {
       </section>
 
       <Level4Story />
+      <Level4LingerStrip />
+      <Level4EveningClose />
     </div>
   );
 }
@@ -366,7 +372,7 @@ function Level4Story() {
     : level4Description.features;
 
   return (
-    <section className="bg-[#F5F1E9] px-6 sm:px-8 lg:px-12 py-20 lg:py-28">
+    <section className="bg-[#F5F1E9] px-6 sm:px-8 lg:px-12 pt-20 pb-14 lg:pt-28 lg:pb-16">
       <div className="mx-auto max-w-[1080px]">
         <Reveal>
           <p className="text-[10px] uppercase tracking-[0.34em] font-medium text-[var(--gold)]">
@@ -404,6 +410,209 @@ function Level4Story() {
                 {f}
               </span>
             ))}
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+const lingerMoments = [
+  {
+    label: "The Dining Room",
+    src: galleryL4Dining,
+    alt: "Candlelit Level 4 dining table with woven pendants",
+  },
+  {
+    label: "The Lounge",
+    src: galleryL4Lounge,
+    alt: "Level 4 lounge corner with rattan chair and pendant light",
+  },
+  {
+    label: "The Bar",
+    src: galleryL4Bar,
+    alt: "Level 4 bar with bamboo cladding and warm bottle display",
+  },
+] as const;
+
+function WavyLine({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      width="72"
+      height="12"
+      viewBox="0 0 72 12"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.3"
+      strokeLinecap="round"
+    >
+      <path d="M0 6 Q9 1 18 6 T36 6 T54 6 T72 6" />
+    </svg>
+  );
+}
+
+/* Soft arched moments — gallery Level 4 photos */
+function Level4LingerStrip() {
+  return (
+    <section className="relative bg-[#F5F1E9] pt-6 pb-20 sm:pb-24 lg:pb-28">
+      <div className="mx-auto max-w-[1200px] px-6 sm:px-8 lg:px-10">
+        <Reveal>
+          <div className="flex flex-col items-center text-center lg:flex-row lg:items-end lg:justify-between lg:text-left">
+            <div>
+              <p className="text-[10px] font-medium uppercase tracking-[0.34em] text-[var(--gold)]">
+                Inside Level 4
+              </p>
+              <h3 className="heading-section mt-4 text-[clamp(1.7rem,3.2vw,2.45rem)] leading-[1.18] text-[var(--ink)]">
+                Linger a little longer
+              </h3>
+            </div>
+            <div className="mt-5 max-w-sm lg:mt-0 lg:pb-1 lg:text-right">
+              <p className="text-[13.5px] leading-[1.85] text-[var(--ink-muted)]">
+                Soft light, woven shadows, and rooms that invite you to stay.
+              </p>
+              <div className="mt-4 flex justify-center text-[var(--gold)]/70 lg:justify-end">
+                <WavyLine />
+              </div>
+            </div>
+          </div>
+        </Reveal>
+
+        <div className="mt-12 grid grid-cols-3 items-end gap-3 sm:gap-5 lg:gap-7">
+          {lingerMoments.map((m, i) => {
+            const heightClass =
+              i === 1
+                ? "aspect-[2/3.15] sm:aspect-[2/3.35]"
+                : i === 0
+                  ? "aspect-[2/2.7] sm:aspect-[2/2.85]"
+                  : "aspect-[2/2.55] sm:aspect-[2/2.7]";
+
+            return (
+              <motion.div
+                key={m.label}
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.8, delay: i * 0.1, ease }}
+                className="flex flex-col items-center gap-3.5"
+              >
+                <Link
+                  to="/gallery"
+                  search={{ cat: "Level 4" }}
+                  aria-label={`View Level 4 gallery — ${m.label}`}
+                  className={`group relative block w-full cursor-pointer overflow-hidden arch-top ${heightClass}`}
+                >
+                  <img
+                    src={m.src}
+                    alt={m.alt}
+                    loading="lazy"
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1.1s] ease-out group-hover:scale-[1.07]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/5 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-95" />
+                  <div className="absolute inset-x-0 bottom-0 hidden translate-y-1 flex-col items-center px-2 pb-4 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100 sm:flex sm:pb-5">
+                    <span className="mb-2 h-px w-6 bg-[var(--gold)]" />
+                    <p className="text-[8px] font-semibold uppercase tracking-[0.22em] text-white sm:text-[9px]">
+                      {m.label}
+                    </p>
+                  </div>
+                </Link>
+                <p className="text-[8.5px] uppercase tracking-[0.2em] text-[var(--ink-muted)] sm:hidden">
+                  {m.label}
+                </p>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Cream arch melting into the evening close */}
+      <div className="pointer-events-none absolute -bottom-px left-0 right-0 z-10">
+        <svg
+          viewBox="0 0 1440 80"
+          preserveAspectRatio="none"
+          className="w-full"
+          style={{ height: "clamp(48px, 6vw, 80px)" }}
+        >
+          <path
+            d="M0,0 L1440,0 L1440,28 Q1080,80 720,52 Q360,18 0,64 Z"
+            fill="#F5F1E9"
+          />
+        </svg>
+      </div>
+    </section>
+  );
+}
+
+/* Cinematic close — quieter twin to Level 5 golden hour */
+function Level4EveningClose() {
+  const { data: cms, isPending } = useLevel4Cms();
+  const bar = cms?.collage.find((s) => s.id === "bar");
+  const dining = cms?.collage.find((s) => s.id === "dining");
+  const backgroundSrc = cmsSrc(
+    isPending,
+    bar?.imageUrl || dining?.imageUrl,
+    kitchenBarLevel4,
+  );
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const bgY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+
+  return (
+    <section ref={ref} className="relative min-h-[560px] overflow-hidden lg:min-h-[640px]">
+      <motion.div style={{ y: bgY }} className="absolute inset-0 will-change-transform">
+        {backgroundSrc ? (
+          <img
+            src={backgroundSrc}
+            alt={bar?.alt || dining?.alt || "Evening light across Level 4"}
+            className="h-full w-full scale-105 object-cover"
+            loading="lazy"
+          />
+        ) : null}
+        <div className="absolute inset-0 bg-black/48" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-transparent to-black/25" />
+      </motion.div>
+
+      <div className="relative z-10 mx-auto grid max-w-[1400px] grid-cols-1 items-center gap-10 px-6 py-24 sm:py-28 lg:grid-cols-2 lg:gap-20 lg:px-10 lg:py-32">
+        <Reveal>
+          <div className="mb-5 text-[var(--gold)]">
+            <SunFlowerIcon />
+          </div>
+          <h2 className="heading-section text-[clamp(2.1rem,4.6vw,3.7rem)] font-normal leading-[1.06] text-white">
+            The evening
+            <br />
+            is waiting.
+          </h2>
+          <p className="mt-6 max-w-[340px] text-[13.5px] leading-[1.95] text-white/72">
+            Slow dinners. Soft light. Conversations that deserve time — and a table of their own.
+          </p>
+          <ul className="mt-8 flex flex-wrap gap-x-5 gap-y-2 text-[9.5px] font-semibold uppercase tracking-[0.24em] text-white/55">
+            <li>Dinner</li>
+            <li className="text-[var(--gold)]/80">·</li>
+            <li>Cocktails</li>
+            <li className="text-[var(--gold)]/80">·</li>
+            <li>Conversation</li>
+          </ul>
+        </Reveal>
+
+        <Reveal delay={0.14}>
+          <div className="rounded-2xl bg-[#F5F1E9] px-7 py-9 shadow-[0_32px_80px_-16px_rgba(0,0,0,0.45)] sm:px-9 sm:py-10">
+            <p className="text-[9px] font-semibold uppercase tracking-[0.34em] text-[var(--ink-muted)]">
+              Reserve your evening
+            </p>
+            <div className="mt-5 h-px w-10 bg-[var(--gold)]" />
+            <p className="mt-5 max-w-sm text-[13.5px] leading-[1.9] text-[var(--ink-muted)]">
+              Join us on Level 4 for an unhurried night — crafted plates, considered pours, and
+              company that stays with you.
+            </p>
+            <ReserveTableLink className="btn-outline mt-8 w-full sm:w-auto">
+              Reserve a Table
+            </ReserveTableLink>
+            <p
+              className="mt-6 text-[1.25rem] text-[var(--cocoa)]"
+              style={{ fontFamily: "Allura, cursive" }}
+            >
+              We look forward to hosting you.
+            </p>
           </div>
         </Reveal>
       </div>

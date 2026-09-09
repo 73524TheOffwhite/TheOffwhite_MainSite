@@ -78,14 +78,11 @@ export function Hero() {
           className="mt-10 flex flex-wrap items-center justify-center gap-4"
         >
           {button1.href === "/events" || button1.href.includes("reserve") || button1.href.includes("events") ? (
-            <ReserveTableLink className="inline-flex items-center px-7 py-3.5 bg-[var(--cream)] text-[var(--ink)] text-xs uppercase tracking-[0.22em] font-semibold transition-transform hover:scale-[1.02]">
+            <ReserveTableLink className="btn-ghost-light">
               {button1.label}
             </ReserveTableLink>
           ) : (
-            <a
-              href={button1.href}
-              className="inline-flex items-center px-7 py-3.5 bg-[var(--cream)] text-[var(--ink)] text-xs uppercase tracking-[0.22em] font-semibold transition-transform hover:scale-[1.02]"
-            >
+            <a href={button1.href} className="btn-ghost-light">
               {button1.label}
             </a>
           )}

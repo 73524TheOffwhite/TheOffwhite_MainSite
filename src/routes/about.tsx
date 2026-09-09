@@ -5,12 +5,6 @@ import { PageHero } from "@/components/PageHero";
 import { Reveal } from "@/components/Reveal";
 import { Eyebrow } from "@/components/Eyebrow";
 import { Testimonials } from "@/components/sections/Testimonials";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  type CarouselApi,
-} from "@/components/ui/carousel";
 import arch from "@/assets/story-arch.jpg";
 import philosophyDining from "@/assets/philosophy-dining.jpg";
 import philosophyChef from "@/assets/philosophy-chef-santosh.jpg";
@@ -18,6 +12,7 @@ import kitchenBar from "@/assets/kitchen-bar-level4.jpg";
 import kitchenBartender from "@/assets/kitchen-bartender.jpg";
 import {
   founderProfiles,
+  founderSlug,
   founderSocialHandles,
   founderStoryClosing,
   founderStoryIntro,
@@ -25,7 +20,6 @@ import {
 } from "@/data/founder-story";
 import { useAboutCms } from "@/lib/about-cms";
 import { cmsSrc } from "@/lib/cms-src";
-import { cn } from "@/lib/utils";
 
 const fallbackPhilosophyImages = [
   { src: philosophyChef, alt: "Head Chef Santosh at The Off White" },
@@ -57,9 +51,9 @@ const fallbackValues = [
 
 const fallbackStats = [
   { v: "12+", l: "Years of craft" },
-  { v: "08", l: "Signature dishes" },
+  { v: "16", l: "Signature dishes" },
   { v: "100%", l: "Made in-house" },
-  { v: "4.9", l: "Guest rating" },
+  { v: "4.7", l: "Guest rating" },
 ];
 
 function ImageFade({
@@ -142,7 +136,7 @@ function KitchenImageFade({
   );
 }
 
-const FOUNDER_PREVIEW_CHARS = 320;
+const FOUNDER_PREVIEW_CHARS = 480;
 
 type FounderCardData = {
   name: string;
@@ -160,68 +154,47 @@ function FounderProfileCard({
   profile: FounderCardData;
   index: number;
 }) {
-  const [expanded, setExpanded] = useState(false);
   const fullText = profile.paragraphs.join("\n\n");
-  const needsTruncate = fullText.length > FOUNDER_PREVIEW_CHARS;
-  const previewText = needsTruncate
-    ? `${fullText.slice(0, FOUNDER_PREVIEW_CHARS).trimEnd()}…`
-    : fullText;
+  const previewText =
+    fullText.length > FOUNDER_PREVIEW_CHARS
+      ? `${fullText.slice(0, FOUNDER_PREVIEW_CHARS).trimEnd()}…`
+      : fullText;
   const initials = profile.name
     .split(/\s+/)
     .filter(Boolean)
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase() ?? "")
     .join("");
+  const slug = founderSlug(profile.name);
 
   return (
-    <article className="flex h-full min-h-[300px] flex-col overflow-hidden rounded-md border border-[var(--border)]/70 bg-[var(--cream)] sm:min-h-[280px] sm:flex-row">
-      <div className="flex min-w-0 flex-1 flex-col px-5 py-6 sm:px-7 sm:py-7 lg:px-8 lg:py-8">
-        <span className="font-serif italic text-[1.65rem] leading-none text-[var(--gold)] sm:text-[1.85rem]">
+    <article className="flex h-full min-h-[420px] flex-col overflow-hidden rounded-md border border-[var(--border)]/70 bg-[var(--cream)] sm:min-h-[380px] sm:flex-row lg:min-h-[440px]">
+      <div className="flex min-w-0 flex-1 flex-col px-6 py-8 sm:px-9 sm:py-10 lg:px-11 lg:py-12">
+        <span className="font-serif italic text-[1.9rem] leading-none text-[var(--gold)] sm:text-[2.15rem]">
           {String(index + 1).padStart(2, "0")}
         </span>
-        <div className="mt-2.5 h-px w-9 bg-[var(--gold)]/55" />
-        <h3 className="heading-section mt-4 text-[clamp(1.45rem,2.4vw,1.95rem)] leading-[1.15] text-[var(--ink)]">
+        <div className="mt-3 h-px w-11 bg-[var(--gold)]/55" />
+        <h3 className="heading-section mt-5 text-[clamp(1.75rem,3vw,2.45rem)] leading-[1.15] text-[var(--ink)]">
           {profile.name}
         </h3>
-        <p className="mt-1.5 text-[9px] font-semibold uppercase tracking-[0.24em] text-[var(--cocoa)] sm:text-[10px]">
+        <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-[var(--cocoa)] sm:text-[11px]">
           {profile.role}
         </p>
 
-        <div
-          className={cn(
-            "mt-4 min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1 [scrollbar-width:thin]",
-            !expanded && "max-h-[7.5rem] sm:max-h-[8.5rem]",
-            expanded && "max-h-[11rem] sm:max-h-[12rem]",
-          )}
-        >
-          {expanded ? (
-            profile.paragraphs.map((paragraph) => (
-              <p
-                key={paragraph.slice(0, 48)}
-                className="mt-3 first:mt-0 text-[13px] leading-[1.75] text-[var(--ink-muted)] sm:text-[14px] sm:leading-[1.8]"
-              >
-                {paragraph}
-              </p>
-            ))
-          ) : (
-            <p className="text-[13px] leading-[1.75] text-[var(--ink-muted)] sm:text-[14px] sm:leading-[1.8]">
-              {previewText}
-            </p>
-          )}
-        </div>
+        <p className="mt-6 line-clamp-6 text-[14px] leading-[1.8] text-[var(--ink-muted)] sm:line-clamp-7 sm:text-[15px] sm:leading-[1.85]">
+          {previewText}
+        </p>
 
-        {needsTruncate ? (
-          <button
-            type="button"
-            onClick={() => setExpanded((v) => !v)}
-            className="mt-3 self-start text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--cocoa)] transition-colors hover:text-[var(--gold)]"
-          >
-            {expanded ? "Show less" : "Read more"}
-          </button>
-        ) : null}
+        <Link
+          to="/about/$founderSlug"
+          params={{ founderSlug: slug }}
+          className="mt-4 self-start text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--cocoa)] transition-colors hover:text-[var(--gold)]"
+        >
+          Read more
+        </Link>
       </div>
 
-      <div className="relative order-first aspect-[4/5] max-h-[320px] w-full shrink-0 p-3 sm:order-none sm:aspect-auto sm:max-h-none sm:h-auto sm:w-[38%] sm:self-stretch sm:p-4 lg:w-[34%]">
+      <div className="relative order-first aspect-[4/5] max-h-[420px] w-full shrink-0 p-4 sm:order-none sm:aspect-auto sm:max-h-none sm:h-auto sm:w-[42%] sm:self-stretch sm:p-5 lg:w-[40%] lg:p-6">
         <div className="relative h-full min-h-0 overflow-hidden rounded-xl bg-[var(--cream-warm)]">
           {profile.imageUrl ? (
             <img
@@ -238,7 +211,7 @@ function FounderProfileCard({
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center" aria-hidden>
-              <span className="font-serif text-3xl tracking-[0.08em] text-[var(--gold)]/45 sm:text-4xl">
+              <span className="font-serif text-4xl tracking-[0.08em] text-[var(--gold)]/45 sm:text-5xl">
                 {initials}
               </span>
             </div>
@@ -266,27 +239,8 @@ function FounderStorySection({
   valuesEyebrow: string;
   valuesParagraphs: string[];
   closingLines: string[];
-  socialHandles: string[];
+  socialHandles: readonly string[];
 }) {
-  const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(0);
-  const [canScrollNext, setCanScrollNext] = useState(false);
-
-  useEffect(() => {
-    if (!api) return;
-    const onSelect = () => {
-      setCurrent(api.selectedScrollSnap());
-      setCanScrollNext(api.canScrollNext());
-    };
-    onSelect();
-    api.on("select", onSelect);
-    api.on("reInit", onSelect);
-    return () => {
-      api.off("select", onSelect);
-      api.off("reInit", onSelect);
-    };
-  }, [api]);
-
   return (
     <section className="bg-[var(--cream-warm)] py-24 lg:py-32">
       <div className="mx-auto max-w-[1120px] px-6 lg:px-10">
@@ -306,61 +260,9 @@ function FounderStorySection({
         </Reveal>
 
         <Reveal delay={0.15} className="mt-14">
-          <div className="relative">
-            <Carousel setApi={setApi} opts={{ align: "start", loop: false }} className="w-full">
-              <CarouselContent className="-ml-3 md:-ml-5">
-                {cards.map((profile, index) => (
-                  <CarouselItem
-                    key={profile.name}
-                    className="pl-3 md:pl-5 basis-[92%] sm:basis-[78%] md:basis-[68%] lg:basis-[62%]"
-                  >
-                    <FounderProfileCard profile={profile} index={index} />
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-            </Carousel>
-
-            <button
-              type="button"
-              aria-label="Swipe to next profile"
-              disabled={!canScrollNext}
-              onClick={() => api?.scrollNext()}
-              className={cn(
-                "group absolute right-0 top-8 z-10 sm:right-2 md:right-3",
-                "flex items-center gap-2 rounded-full border border-[var(--ink)]/10 bg-[var(--cream)]/75",
-                "px-3.5 py-2 backdrop-blur-[2px] transition-all duration-500",
-                "opacity-45 hover:opacity-85 hover:border-[var(--gold)]/35 hover:bg-[var(--cream)]/95",
-                "disabled:pointer-events-none disabled:opacity-0",
-              )}
-            >
-              <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[var(--ink)]">
-                Swipe
-              </span>
-              <span
-                aria-hidden
-                className="font-serif text-lg leading-none text-[var(--gold)] transition-transform duration-500 group-hover:translate-x-0.5"
-              >
-                →
-              </span>
-            </button>
-          </div>
-
-          <div className="mt-7 flex items-center justify-center gap-2" role="tablist" aria-label="Founder profiles">
-            {cards.map((profile, i) => (
-              <button
-                key={profile.name}
-                type="button"
-                role="tab"
-                aria-selected={current === i}
-                aria-label={`Show ${profile.name}`}
-                onClick={() => api?.scrollTo(i)}
-                className={cn(
-                  "rounded-full transition-all duration-300",
-                  current === i
-                    ? "h-2 w-2 bg-[var(--cocoa)]"
-                    : "h-2 w-2 bg-[var(--ink)]/18 hover:bg-[var(--ink)]/35",
-                )}
-              />
+          <div className="flex flex-col gap-6 md:gap-8">
+            {cards.map((profile, index) => (
+              <FounderProfileCard key={profile.name} profile={profile} index={index} />
             ))}
           </div>
         </Reveal>

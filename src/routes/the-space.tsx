@@ -26,6 +26,7 @@ import level4Decor from "@/assets/level4-decor.png";
 import level5Decor from "@/assets/level5-decor.png";
 import { useSpaceCms } from "@/lib/space-cms";
 import { cmsSrc } from "@/lib/cms-src";
+import { useTestimonials } from "@/lib/testimonials";
 
 export const Route = createFileRoute("/the-space")({
   head: () => ({
@@ -379,10 +380,23 @@ function SectionEyebrow({ children }: { children: React.ReactNode }) {
 }
 
 function QuoteCard({ quotes }: { quotes: Array<{ text: string; author: string }> }) {
-  const safeQuotes = quotes.length ? quotes : fallbackMemoryQuotes;
+  const { testimonials } = useTestimonials();
+  const reviewQuotes = (testimonials ?? [])
+    .filter((t) => t.quote.trim().length > 0)
+    .map((t) => ({ text: t.quote, author: t.author }));
+  const safeQuotes = reviewQuotes.length
+    ? reviewQuotes
+    : quotes.length
+      ? quotes
+      : fallbackMemoryQuotes;
   const [quoteIndex, setQuoteIndex] = useState(0);
 
   useEffect(() => {
+    setQuoteIndex(0);
+  }, [safeQuotes.length]);
+
+  useEffect(() => {
+    if (safeQuotes.length <= 1) return;
     const id = window.setInterval(() => {
       setQuoteIndex((i) => (i + 1) % safeQuotes.length);
     }, 4500);
@@ -398,13 +412,15 @@ function QuoteCard({ quotes }: { quotes: Array<{ text: string; author: string }>
       </svg>
       <AnimatePresence mode="wait">
         <motion.div
-          key={quoteIndex}
+          key={`${quote.author}-${quoteIndex}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.9, ease }}
         >
-          <p className="font-serif text-[var(--ink)] text-[0.875rem] sm:text-[0.9rem] leading-[1.6] italic">{quote.text}</p>
+          <p className="font-serif text-[var(--ink)] text-[0.875rem] sm:text-[0.9rem] leading-[1.6] italic line-clamp-6">
+            {quote.text}
+          </p>
           <p className="mt-3 text-[9px] uppercase tracking-[0.28em] text-[var(--ink-muted)] font-medium">
             — {quote.author}
           </p>

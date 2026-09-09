@@ -18,6 +18,7 @@ import { Route as EventsRouteImport } from './routes/events'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutFounderSlugRouteImport } from './routes/about_.$founderSlug'
 
 const TheSpaceRoute = TheSpaceRouteImport.update({
   id: '/the-space',
@@ -64,6 +65,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutFounderSlugRoute = AboutFounderSlugRouteImport.update({
+  id: '/about_/$founderSlug',
+  path: '/about/$founderSlug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/level-5-events': typeof Level5EventsRoute
   '/menu': typeof MenuRoute
   '/the-space': typeof TheSpaceRoute
+  '/about/$founderSlug': typeof AboutFounderSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByTo {
   '/level-5-events': typeof Level5EventsRoute
   '/menu': typeof MenuRoute
   '/the-space': typeof TheSpaceRoute
+  '/about/$founderSlug': typeof AboutFounderSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,6 +106,7 @@ export interface FileRoutesById {
   '/level-5-events': typeof Level5EventsRoute
   '/menu': typeof MenuRoute
   '/the-space': typeof TheSpaceRoute
+  '/about_/$founderSlug': typeof AboutFounderSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +120,7 @@ export interface FileRouteTypes {
     | '/level-5-events'
     | '/menu'
     | '/the-space'
+    | '/about/$founderSlug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +132,7 @@ export interface FileRouteTypes {
     | '/level-5-events'
     | '/menu'
     | '/the-space'
+    | '/about/$founderSlug'
   id:
     | '__root__'
     | '/'
@@ -133,6 +144,7 @@ export interface FileRouteTypes {
     | '/level-5-events'
     | '/menu'
     | '/the-space'
+    | '/about_/$founderSlug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -145,6 +157,7 @@ export interface RootRouteChildren {
   Level5EventsRoute: typeof Level5EventsRoute
   MenuRoute: typeof MenuRoute
   TheSpaceRoute: typeof TheSpaceRoute
+  AboutFounderSlugRoute: typeof AboutFounderSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -212,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about_/$founderSlug': {
+      id: '/about_/$founderSlug'
+      path: '/about/$founderSlug'
+      fullPath: '/about/$founderSlug'
+      preLoaderRoute: typeof AboutFounderSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -225,6 +245,7 @@ const rootRouteChildren: RootRouteChildren = {
   Level5EventsRoute: Level5EventsRoute,
   MenuRoute: MenuRoute,
   TheSpaceRoute: TheSpaceRoute,
+  AboutFounderSlugRoute: AboutFounderSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

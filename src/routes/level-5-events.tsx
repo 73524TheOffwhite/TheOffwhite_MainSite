@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Reveal } from "@/components/Reveal";
@@ -88,6 +88,19 @@ function IconSun() {
       <line x1="31.3" y1="31.3" x2="34.8" y2="34.8" />
       <line x1="34.8" y1="11.2" x2="31.3" y2="14.7" />
       <line x1="14.7" y1="31.3" x2="11.2" y2="34.8" />
+    </svg>
+  );
+}
+
+function IconDining() {
+  return (
+    <svg width="46" height="46" viewBox="0 0 46 46" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="23" cy="22" r="9" />
+      <circle cx="23" cy="22" r="5" />
+      <path d="M8 10 L8 36" />
+      <path d="M5 10 L5 18 Q5 21 8 21" />
+      <path d="M11 10 L11 18 Q11 21 8 21" />
+      <path d="M38 10 L38 21 Q34 21 34 26 L34 36" />
     </svg>
   );
 }
@@ -390,7 +403,7 @@ const defaultFeatures = [
   {
     icon: "guests" as const,
     Icon: IconGuests,
-    title: "100 Guests",
+    title: "50 Guests",
     body: "Host unforgettable celebrations with your favourite people.",
   },
   {
@@ -400,19 +413,20 @@ const defaultFeatures = [
     body: "A grand setting that adds to every moment.",
   },
   {
-    icon: "sun" as const,
-    Icon: IconSun,
-    title: "Natural Daylight",
-    body: "Bright, airy and beautiful from morning to sunset.",
+    icon: "dining" as const,
+    Icon: IconDining,
+    title: "Private Dining",
+    body: "For tables of 15 guests or more",
   },
 ];
 
-function featureIcon(icon: "guests" | "arch" | "sun" | "custom", customIconUrl?: string) {
+function featureIcon(icon: "guests" | "arch" | "sun" | "dining" | "custom", customIconUrl?: string) {
   if (icon === "custom" && customIconUrl) {
     return <img src={customIconUrl} alt="" className="h-[46px] w-[46px] object-contain" />;
   }
   if (icon === "arch") return <IconArch />;
   if (icon === "sun") return <IconSun />;
+  if (icon === "dining") return <IconDining />;
   return <IconGuests />;
 }
 
@@ -497,9 +511,15 @@ function OccasionsSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.75, delay: i * 0.09, ease }}
-            className="group relative overflow-hidden"
+            className="group relative cursor-pointer overflow-hidden"
             style={{ aspectRatio: "3/4" }}
           >
+            <Link
+              to="/gallery"
+              search={{ cat: "Level 5" }}
+              className="absolute inset-0 z-10"
+              aria-label={`View Level 5 gallery — ${o.alt}`}
+            />
             {o.img ? (
             <img
               src={o.img}
@@ -608,7 +628,12 @@ function NoteAndGallerySection() {
                   transition={{ duration: 0.65, delay: i * 0.08, ease }}
                   className="flex flex-col items-center gap-2"
                 >
-                  <div className="relative overflow-hidden w-full aspect-[2/3] arch-top group">
+                  <Link
+                    to="/gallery"
+                    search={{ cat: "Level 5" }}
+                    className="group relative block w-full aspect-[2/3] overflow-hidden arch-top cursor-pointer"
+                    aria-label={`View Level 5 gallery — ${g.label}`}
+                  >
                     {g.img ? (
                     <img
                       src={g.img}
@@ -618,7 +643,7 @@ function NoteAndGallerySection() {
                     />
                     ) : null}
                     <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors duration-400" />
-                  </div>
+                  </Link>
                   <p className="text-[7.5px] sm:text-[8.5px] uppercase tracking-[0.16em] text-center text-[var(--ink-muted)] leading-tight px-0.5">
                     {g.label}
                   </p>
