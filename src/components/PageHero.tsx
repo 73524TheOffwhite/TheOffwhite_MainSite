@@ -8,6 +8,7 @@ export function PageHero({
   title,
   description,
   image,
+  mobileImage,
   crumb,
   imageClassName,
 }: {
@@ -15,6 +16,7 @@ export function PageHero({
   title: React.ReactNode;
   description?: string;
   image?: string;
+  mobileImage?: string;
   crumb: string;
   imageClassName?: string;
 }) {
@@ -32,8 +34,16 @@ export function PageHero({
             alt=""
             className={cn(
               "absolute inset-0 h-full w-full max-w-none object-cover object-center",
+              mobileImage && "hidden lg:block",
               imageClassName,
             )}
+          />
+        ) : null}
+        {mobileImage ? (
+          <img
+            src={mobileImage}
+            alt=""
+            className="absolute inset-0 h-full w-full max-w-none object-cover object-center lg:hidden"
           />
         ) : null}
         <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/65" />

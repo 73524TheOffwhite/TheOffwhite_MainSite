@@ -7,6 +7,7 @@ import { ReserveTableLink } from "@/components/ReserveTableLink";
 import { Reveal } from "@/components/Reveal";
 import { Eyebrow } from "@/components/Eyebrow";
 import dining from "@/assets/Gemini_Generated_Image_nwgy8znwgy8znwgy.jpg";
+import menuHeroMobile from "@/assets/hero_menu_image/menu-hero-mobile-04-kitchen-background.jpg";
 // import seabass from "@/assets/dish-seabass.jpg";
 // import octopus from "@/assets/dish-octopus.jpg";
 // import ravioli from "@/assets/dish-ravioli.jpg";
@@ -199,6 +200,7 @@ function MenuPage() {
         title={<>Made slowly,<br />served generously.</>}
         description="Every plate, photographed and detailed. Tap any dish to read its full story."
         image={dining}
+        mobileImage={menuHeroMobile}
         crumb="Menu"
         imageClassName="object-[62%_center]"
       />
