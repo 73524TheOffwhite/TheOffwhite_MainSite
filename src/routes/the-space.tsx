@@ -379,7 +379,13 @@ function SectionEyebrow({ children }: { children: React.ReactNode }) {
   );
 }
 
-function QuoteCard({ quotes }: { quotes: Array<{ text: string; author: string }> }) {
+function QuoteCard({
+  quotes,
+  variant = "portrait",
+}: {
+  quotes: Array<{ text: string; author: string }>;
+  variant?: "portrait" | "banner";
+}) {
   const { testimonials } = useTestimonials();
   const reviewQuotes = (testimonials ?? [])
     .filter((t) => t.quote.trim().length > 0)
@@ -404,9 +410,16 @@ function QuoteCard({ quotes }: { quotes: Array<{ text: string; author: string }>
   }, [safeQuotes.length]);
 
   const quote = safeQuotes[quoteIndex % safeQuotes.length];
+  const isBanner = variant === "banner";
 
   return (
-    <div className="flex flex-col justify-center rounded-md aspect-[4/5] bg-[var(--cream-warm)] px-4 py-6 sm:px-5 sm:py-7 shadow-[0_8px_30px_-12px_rgba(43,33,24,0.12)]">
+    <div
+      className={
+        isBanner
+          ? "flex flex-col justify-center rounded-md bg-[var(--cream-warm)] px-5 py-5 shadow-[0_8px_30px_-12px_rgba(43,33,24,0.12)]"
+          : "flex flex-col justify-center rounded-md aspect-[4/5] bg-[var(--cream-warm)] px-4 py-6 sm:px-5 sm:py-7 shadow-[0_8px_30px_-12px_rgba(43,33,24,0.12)]"
+      }
+    >
       <svg viewBox="0 0 32 24" className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--gold)] mb-3 shrink-0" fill="currentColor">
         <path d="M0 24V14.4C0 6.4 4.8 1.6 14.4 0l1.6 3.2C11.2 4.48 8.64 7.2 8 11.2H14.4V24H0zm17.6 0V14.4C17.6 6.4 22.4 1.6 32 0l1.6 3.2C28.8 4.48 26.24 7.2 25.6 11.2H32V24H17.6z" />
       </svg>
@@ -430,6 +443,57 @@ function QuoteCard({ quotes }: { quotes: Array<{ text: string; author: string }>
   );
 }
 
+type MemoryImageSlide = { type: "image"; src?: string; alt: string };
+type MemoryCard = MemoryImageSlide & { uid: string };
+
+const MEMORY_SLIDE_MS = 650;
+const MEMORY_VISIBLE = 4;
+const MEMORY_PAGES = 4;
+const MEMORY_BUFFER = MEMORY_VISIBLE * MEMORY_PAGES;
+
+function MemoryImageCard({ slide }: { slide: MemoryImageSlide }) {
+  return (
+    <div className="group overflow-hidden rounded-md aspect-[4/5] shadow-[0_8px_30px_-12px_rgba(43,33,24,0.2)]">
+      {slide.src ? (
+        <img
+          src={slide.src}
+          alt={slide.alt}
+          loading="lazy"
+          className="h-full w-full object-cover transition-transform duration-[1.3s] ease-out group-hover:scale-[1.04]"
+        />
+      ) : null}
+    </div>
+  );
+}
+
+function MemoryCardTrack({
+  items,
+  x,
+  cardClassName,
+  gapClassName,
+}: {
+  items: MemoryCard[];
+  x: number;
+  cardClassName: string;
+  gapClassName: string;
+}) {
+  return (
+    <div className="overflow-hidden">
+      <motion.div
+        className={`flex ${gapClassName}`}
+        animate={{ x }}
+        transition={{ duration: MEMORY_SLIDE_MS / 1000, ease }}
+      >
+        {items.map((slide) => (
+          <div key={slide.uid} className={`shrink-0 ${cardClassName}`}>
+            <MemoryImageCard slide={slide} />
+          </div>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
+
 function MemoriesSection({
   eyebrow,
   quotes,
@@ -437,27 +501,97 @@ function MemoriesSection({
 }: {
   eyebrow: string;
   quotes: Array<{ text: string; author: string }>;
-  slides: Array<{ type: "image"; src?: string; alt: string } | { type: "quote" }>;
+  slides: Array<MemoryImageSlide | { type: "quote" }>;
 }) {
-  const [index, setIndex] = useState(0);
-  const [slideStep, setSlideStep] = useState(0);
-  const slideRef = useRef<HTMLDivElement>(null);
-  const safeSlides = slides.length ? slides : fallbackMemorySlides;
-  const maxIndex = safeSlides.length - 1;
+  const sources = (slides.length ? slides : fallbackMemorySlides).filter(
+    (slide): slide is MemoryImageSlide => slide.type === "image" && Boolean(slide.src),
+  );
+  const sourceKey = sources.map((s) => `${s.src ?? ""}:${s.alt}`).join("|");
+  const sourcesRef = useRef(sources);
+  sourcesRef.current = sources;
+  const uidRef = useRef(0);
+  const poolRef = useRef(0);
 
-  const prev = useCallback(() => setIndex((i) => Math.max(0, i - 1)), []);
-  const next = useCallback(() => setIndex((i) => Math.min(maxIndex, i + 1)), [maxIndex]);
+  const take = useCallback((count: number) => {
+    const list = sourcesRef.current;
+    if (!list.length) return [] as MemoryCard[];
+    const next: MemoryCard[] = [];
+    for (let i = 0; i < count; i++) {
+      const item = list[poolRef.current % list.length];
+      poolRef.current += 1;
+      next.push({ ...item, uid: `memory-${uidRef.current++}` });
+    }
+    return next;
+  }, []);
+
+  const [deck, setDeck] = useState<MemoryCard[]>([]);
+  const [offset, setOffset] = useState(0);
+  const [desktopStep, setDesktopStep] = useState(230);
+  const [mobileStep, setMobileStep] = useState(0);
+  const mobileViewportRef = useRef<HTMLDivElement>(null);
+  const animatingRef = useRef(false);
+  const offsetRef = useRef(0);
+  offsetRef.current = offset;
+
+  useEffect(() => {
+    uidRef.current = 0;
+    poolRef.current = 0;
+    offsetRef.current = 0;
+    setOffset(0);
+    setDeck(sourcesRef.current.length ? take(MEMORY_BUFFER) : []);
+  }, [sourceKey, take]);
 
   useEffect(() => {
     const measure = () => {
-      if (!slideRef.current) return;
-      const gap = window.innerWidth >= 1024 ? 20 : 16;
-      setSlideStep(slideRef.current.offsetWidth + gap);
+      const xl = window.innerWidth >= 1280;
+      setDesktopStep((xl ? 230 : 210) + 20);
+      const viewport = mobileViewportRef.current;
+      if (viewport) setMobileStep(viewport.clientWidth / 2 + 8);
     };
     measure();
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
   }, []);
+
+  const canPrev = offset > 0;
+  const canNext = deck.length > 0;
+
+  const step = useCallback(
+    (dir: 1 | -1) => {
+      if (animatingRef.current) return;
+      const currentOffset = offsetRef.current;
+
+      if (dir < 0) {
+        if (currentOffset < MEMORY_VISIBLE) return;
+        animatingRef.current = true;
+        const nextOffset = Math.max(0, currentOffset - MEMORY_VISIBLE);
+        offsetRef.current = nextOffset;
+        setOffset(nextOffset);
+        window.setTimeout(() => {
+          animatingRef.current = false;
+        }, MEMORY_SLIDE_MS);
+        return;
+      }
+
+      animatingRef.current = true;
+      const nextOffset = currentOffset + MEMORY_VISIBLE;
+      setDeck((current) => {
+        if (current.length < nextOffset + MEMORY_VISIBLE) {
+          return [...current, ...take(MEMORY_VISIBLE)];
+        }
+        return current;
+      });
+      offsetRef.current = nextOffset;
+      setOffset(nextOffset);
+      window.setTimeout(() => {
+        animatingRef.current = false;
+      }, MEMORY_SLIDE_MS);
+    },
+    [take],
+  );
+
+  const prev = useCallback(() => step(-1), [step]);
+  const next = useCallback(() => step(1), [step]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -468,25 +602,6 @@ function MemoriesSection({
     return () => window.removeEventListener("keydown", onKey);
   }, [prev, next]);
 
-  const renderSlide = (slide: (typeof safeSlides)[number], i: number) =>
-    slide.type === "image" ? (
-      <div
-        key={i}
-        className="group overflow-hidden rounded-md aspect-[4/5] shadow-[0_8px_30px_-12px_rgba(43,33,24,0.2)]"
-      >
-        {slide.src ? (
-        <img
-          src={slide.src}
-          alt={slide.alt}
-          loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-[1.3s] ease-out group-hover:scale-[1.04]"
-        />
-        ) : null}
-      </div>
-    ) : (
-      <QuoteCard key={i} quotes={quotes} />
-    );
-
   const arrowBtn =
     "absolute top-1/2 z-10 -translate-y-1/2 rounded-full border border-[var(--border)] bg-[var(--cream)]/95 flex items-center justify-center text-[var(--ink-muted)] hover:border-[var(--cocoa)] hover:text-[var(--cocoa)] hover:shadow-[0_4px_16px_-6px_rgba(43,33,24,0.18)] transition-all duration-300 disabled:opacity-30 disabled:pointer-events-none disabled:shadow-none touch-manipulation";
 
@@ -495,42 +610,90 @@ function MemoriesSection({
       <SectionEyebrow>{eyebrow}</SectionEyebrow>
 
       <div className="relative mx-auto mt-10 sm:mt-12 lg:mt-12 max-w-[1400px] px-4 sm:px-6 lg:px-10">
-        <button
-          type="button"
-          onClick={prev}
-          disabled={index === 0}
-          aria-label="Previous memory"
-          className={`${arrowBtn} left-0 sm:left-1 lg:left-2 w-9 h-9 lg:w-12 lg:h-12`}
-        >
-          <ChevronLeft className="w-4 h-4 lg:w-5 lg:h-5" strokeWidth={1.5} />
-        </button>
-
-        <button
-          type="button"
-          onClick={next}
-          disabled={index === maxIndex}
-          aria-label="Next memory"
-          className={`${arrowBtn} right-0 sm:right-1 lg:right-2 w-9 h-9 lg:w-12 lg:h-12`}
-        >
-          <ChevronRight className="w-4 h-4 lg:w-5 lg:h-5" strokeWidth={1.5} />
-        </button>
-
-        <div className="overflow-hidden px-11 sm:px-12 lg:px-16 touch-pan-x">
-          <motion.div
-            className="flex gap-4 lg:gap-5"
-            animate={{ x: slideStep ? -index * slideStep : 0 }}
-            transition={{ duration: 0.65, ease }}
-          >
-            {safeSlides.map((slide, i) => (
-              <div
-                key={i}
-                ref={i === 0 ? slideRef : undefined}
-                className="shrink-0 w-[min(170px,62vw)] sm:w-[190px] lg:w-[210px] xl:w-[230px]"
-              >
-                {renderSlide(slide, i)}
+        <div className="lg:hidden">
+          <div className="relative">
+            <button
+              type="button"
+              onClick={prev}
+              disabled={!canPrev}
+              aria-label="Previous memory"
+              className={`${arrowBtn} left-0 w-9 h-9`}
+            >
+              <ChevronLeft className="w-4 h-4" strokeWidth={1.5} />
+            </button>
+            <button
+              type="button"
+              onClick={next}
+              disabled={!canNext}
+              aria-label="Next memory"
+              className={`${arrowBtn} right-0 w-9 h-9`}
+            >
+              <ChevronRight className="w-4 h-4" strokeWidth={1.5} />
+            </button>
+            <div className="px-11">
+              <div ref={mobileViewportRef} className="@container overflow-hidden">
+                {deck.length > 0 ? (
+                  <MemoryCardTrack
+                    items={deck}
+                    x={-(offset * (mobileStep || desktopStep))}
+                    cardClassName="w-[calc(50cqi-0.5rem)]"
+                    gapClassName="gap-4"
+                  />
+                ) : null}
               </div>
-            ))}
-          </motion.div>
+            </div>
+          </div>
+          <div className="mt-4 px-11">
+            <QuoteCard quotes={quotes} variant="banner" />
+          </div>
+        </div>
+
+        <div className="hidden lg:block relative">
+          <button
+            type="button"
+            onClick={prev}
+            disabled={!canPrev}
+            aria-label="Previous memory"
+            className={`${arrowBtn} left-2 w-12 h-12`}
+          >
+            <ChevronLeft className="w-5 h-5" strokeWidth={1.5} />
+          </button>
+          <button
+            type="button"
+            onClick={next}
+            disabled={!canNext}
+            aria-label="Next memory"
+            className={`${arrowBtn} right-2 w-12 h-12`}
+          >
+            <ChevronRight className="w-5 h-5" strokeWidth={1.5} />
+          </button>
+          <div className="overflow-hidden px-16">
+            <div className="flex gap-5">
+              {deck.length > 0 ? (
+                <div className="w-[440px] xl:w-[480px] shrink-0">
+                  <MemoryCardTrack
+                    items={deck}
+                    x={-(offset * desktopStep)}
+                    cardClassName="w-[210px] xl:w-[230px]"
+                    gapClassName="gap-5"
+                  />
+                </div>
+              ) : null}
+              <div className="shrink-0 w-[210px] xl:w-[230px]">
+                <QuoteCard quotes={quotes} />
+              </div>
+              {deck.length > 2 ? (
+                <div className="w-[440px] xl:w-[480px] shrink-0">
+                  <MemoryCardTrack
+                    items={deck.slice(2)}
+                    x={-(offset * desktopStep)}
+                    cardClassName="w-[210px] xl:w-[230px]"
+                    gapClassName="gap-5"
+                  />
+                </div>
+              ) : null}
+            </div>
+          </div>
         </div>
       </div>
     </section>
