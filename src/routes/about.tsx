@@ -44,8 +44,8 @@ export const Route = createFileRoute("/about")({
 });
 
 const fallbackValues = [
-  { num: "01", title: "Mediterranean Soul", body: "Sun-soaked flavours, slow afternoons, generous hospitality. Every plate carries a memory of the sea." },
-  { num: "02", title: "Crafted by Hand", body: "From the breads we bake at dawn to the cocktails stirred at dusk — every detail is made, not assembled." },
+  { num: "01", title: "Global Soul", body: "Worldly flavours, slow afternoons, generous hospitality. Every plate carries a memory of the journey." },
+  { num: "02", title: "Crafted by hand", body: "Every plate is cooked with attention, every cocktail made to perfection. Every detail is designed, not assembled." },
   { num: "03", title: "Architecture of Calm", body: "Arches, lime-washed walls, warm light. The room is the first course." },
 ];
 
@@ -380,8 +380,8 @@ function AboutPage() {
     data?.values.cards?.length
       ? data.values.cards.map((card, i) => ({
           num: String(i + 1).padStart(2, "0"),
-          title: card.title,
-          body: card.body,
+          title: i === 0 ? fallbackValues[0].title : i === 1 ? fallbackValues[1].title : card.title,
+          body: i === 0 ? fallbackValues[0].body : i === 1 ? fallbackValues[1].body : card.body,
         }))
       : fallbackValues;
 
