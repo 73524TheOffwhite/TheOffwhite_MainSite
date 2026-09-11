@@ -2,6 +2,7 @@ import { useEffect, useId, useState } from "react";
 import { Instagram } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { Eyebrow } from "@/components/Eyebrow";
+import instagramChipLogo from "@/assets/insta_logo/offwhite-insta-logo.png";
 
 const PROFILE_URL = "https://www.instagram.com/offwhitegoa?utm_source=qr";
 const ELFSIGHT_SCRIPT = "https://elfsightcdn.com/platform.js";
@@ -384,12 +385,14 @@ export function InstagramFeed() {
             href={PROFILE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="group mt-8 flex items-center gap-3 rounded-full border border-[var(--border)] bg-[var(--cream-warm)] px-6 py-3 transition-all duration-400 hover:border-[var(--cocoa)]/40 hover:bg-[#EFE3D1]"
+            className="group mt-8 flex items-center gap-3.5 rounded-full border border-[var(--border)] bg-[var(--cream-warm)] px-7 py-3.5 transition-all duration-400 hover:border-[var(--cocoa)]/40 hover:bg-[#EFE3D1]"
           >
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#833ab4] via-[#fd1d1d] to-[#fcb045] p-[2px]">
-              <span className="flex h-full w-full items-center justify-center rounded-full bg-[var(--cream)] text-xs font-bold text-[var(--ink)]">
-                OW
-              </span>
+            <span className="h-12 w-12 shrink-0 overflow-hidden rounded-full">
+              <img
+                src={instagramChipLogo}
+                alt="The Off White"
+                className="h-full w-full object-cover object-center"
+              />
             </span>
             <span className="flex flex-col items-start">
               <span className="text-sm font-semibold tracking-wide text-[var(--ink)] transition-colors group-hover:text-[var(--cocoa)]">

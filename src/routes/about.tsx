@@ -10,6 +10,7 @@ import philosophyDining from "@/assets/philosophy-dining.jpg";
 import philosophyChef from "@/assets/philosophy-chef-santosh.jpg";
 import kitchenBar from "@/assets/kitchen-bar-level4.jpg";
 import kitchenBartender from "@/assets/kitchen-bartender.jpg";
+import instagramChipLogo from "@/assets/insta_logo/offwhite-insta-logo.png";
 import {
   founderProfiles,
   founderSlug,
@@ -230,7 +231,7 @@ function FounderStorySection({
   valuesEyebrow,
   valuesParagraphs,
   closingLines,
-  socialHandles,
+  socialHandles: _socialHandles,
 }: {
   eyebrow: string;
   headline: string;
@@ -290,9 +291,28 @@ function FounderStorySection({
               {paragraph}
             </p>
           ))}
-          <p className="mt-8 text-sm tracking-[0.12em] text-[var(--cocoa)]">
-            {socialHandles.join(" · ")}
-          </p>
+          <div className="mt-8 flex justify-center">
+            <a
+              href="https://www.instagram.com/offwhitegoa?utm_source=qr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center gap-3.5 rounded-full border border-[var(--border)] bg-[var(--cream-warm)] px-7 py-3.5 transition-all duration-400 hover:border-[var(--cocoa)]/40 hover:bg-[#EFE3D1]"
+            >
+              <span className="h-12 w-12 shrink-0 overflow-hidden rounded-full">
+                <img
+                  src={instagramChipLogo}
+                  alt="The Off White"
+                  className="h-full w-full object-cover object-center"
+                />
+              </span>
+              <span className="flex flex-col items-start">
+                <span className="text-sm font-semibold tracking-wide text-[var(--ink)] transition-colors group-hover:text-[var(--cocoa)]">
+                  offwhitegoa
+                </span>
+                <span className="text-[0.7rem] text-[var(--ink-muted)]">The Off White Bar & Grill</span>
+              </span>
+            </a>
+          </div>
         </Reveal>
       </div>
     </section>
