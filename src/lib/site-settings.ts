@@ -27,7 +27,7 @@ export type SiteSettings = {
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   brand_name: "The Off White Bar & Grill",
-  tagline: "Fine Dining · Crafted Cocktails · Mediterranean Soul",
+  tagline: "Fine Dining · Crafted Cocktails · Global Soul",
   copyright_year: "2026",
   phone_primary: "+918767811778",
   phone_display: "+91 87678 11778",
@@ -66,6 +66,10 @@ function mergeSettings(rows: Array<{ key: string; value: string }>): SiteSetting
     ...values,
     email_primary: "info@theoffwhite.com",
     email_events: "info@theoffwhite.com",
+    tagline: String(values.tagline || DEFAULT_SITE_SETTINGS.tagline).replaceAll(
+      "Mediterranean",
+      "Global",
+    ),
   };
 }
 

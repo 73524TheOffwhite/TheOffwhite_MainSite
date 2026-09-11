@@ -35,7 +35,7 @@ export function Footer() {
               Fine Dining · Crafted Cocktails
               <span className="lg:hidden"> · </span>
               <br className="hidden lg:block" />
-              Mediterranean Soul
+              Global Soul
             </p>
             <a
               aria-label="Instagram @offwhitegoa"

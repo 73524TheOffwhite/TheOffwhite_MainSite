@@ -17,7 +17,10 @@ function headlineLines(headline: string) {
 
 export function Hero() {
   const { data, isPending } = useHomepageCms();
-  const eyebrow = data?.hero.eyebrow || "Fine Dining · Crafted Cocktails · Mediterranean Soul";
+  const eyebrow = (data?.hero.eyebrow || "Fine Dining · Crafted Cocktails · Global Soul").replaceAll(
+    "Mediterranean",
+    "Global",
+  );
   const headline = data?.hero.headline || "Where Architecture / Meets Cuisine";
   const lines = headlineLines(headline);
   const imageSrc = cmsSrc(isPending, data?.hero.imageUrl, heroImg);

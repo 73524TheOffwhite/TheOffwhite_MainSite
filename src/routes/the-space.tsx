@@ -40,7 +40,7 @@ export const Route = createFileRoute("/the-space")({
       { property: "og:title", content: "The Space — The Off White" },
       {
         property: "og:description",
-        content: "Designed to be experienced. Mediterranean architecture and soul in Navelim, South Goa.",
+        content: "Designed to be experienced. Global architecture and soul in Navelim, South Goa.",
       },
     ],
   }),
@@ -79,7 +79,7 @@ const fallbackGridImages = [
 const fallbackMemoryQuotes = [
   { text: "We got engaged here! Everything was perfect.", author: "Priya & Arjun" },
   { text: "The attention to detail is unmatched. The space, the service, the flavours — simply outstanding.", author: "Arjun R." },
-  { text: "Felt like a vacation in the Mediterranean. Our new favourite spot in Goa!", author: "Neha D." },
+  { text: "Felt like a vacation in the Global. Our new favourite spot in Goa!", author: "Neha D." },
   { text: "A hidden gem! The ambiance, the food, everything was absolutely perfect.", author: "Priya M." },
 ];
 

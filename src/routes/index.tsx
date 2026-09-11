@@ -10,7 +10,7 @@ import { InstagramFeed } from "@/components/sections/InstagramFeed";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "The Off White — Fine Dining, Crafted Cocktails, Mediterranean Soul" },
+      { title: "The Off White — Fine Dining, Crafted Cocktails, Global Soul" },
       { name: "description", content: "Where architecture meets cuisine. Fine dining at The Off White Bar & Grill in Navelim, South Goa." },
     ],
   }),

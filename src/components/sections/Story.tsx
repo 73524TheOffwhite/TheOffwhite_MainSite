@@ -8,7 +8,10 @@ import { cmsSrc } from "@/lib/cms-src";
 export function Story() {
   const { data, isPending } = useHomepageCms();
   const eyebrow = data?.story.eyebrow || "Our Story";
-  const headline = data?.story.headline || "Inspired by Mediterranean Living & Timeless Design";
+  const headline = (data?.story.headline || "Inspired by Global Living & Timeless Design").replaceAll(
+    "Mediterranean",
+    "Global",
+  );
   const body =
     data?.story.body ||
     "The Off White Bar & Grill is more than a restaurant — it's a celebration of flavour, light, and space. From sunlit afternoons to intimate evenings, every detail is crafted to make your experience beautifully unforgettable.";
@@ -18,7 +21,7 @@ export function Story() {
   const headlineNodes = headline.includes("\n")
     ? headline.split("\n")
     : /Living & Timeless Design/i.test(headline)
-      ? ["Inspired by Mediterranean", "Living & Timeless Design"]
+      ? ["Inspired by Global", "Living & Timeless Design"]
       : [headline];
 
   return (
@@ -41,7 +44,7 @@ export function Story() {
               {imageSrc ? (
               <img
                 src={imageSrc}
-                alt="Mediterranean archway"
+                alt="Global archway"
                 className="w-full h-[380px] sm:h-[460px] lg:h-[560px] object-cover transition-transform duration-[1.2s] hover:scale-[1.04]"
                 width={1024}
                 height={1280}
