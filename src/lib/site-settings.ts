@@ -61,7 +61,12 @@ function mergeSettings(rows: Array<{ key: string; value: string }>): SiteSetting
       .map((row) => [row.key, row.value.trim()]),
   );
 
-  return { ...DEFAULT_SITE_SETTINGS, ...values };
+  return {
+    ...DEFAULT_SITE_SETTINGS,
+    ...values,
+    email_primary: "info@theoffwhite.com",
+    email_events: "info@theoffwhite.com",
+  };
 }
 
 async function fetchSiteSettings(): Promise<SiteSettings> {
