@@ -189,7 +189,7 @@ function ReservationForm({ submitLabel }: { submitLabel: string }) {
 
       <button
         type="submit"
-        className="w-full mt-2 inline-flex items-center justify-center gap-2 bg-[var(--cocoa)] hover:bg-[var(--cocoa-dark)] text-white py-4 text-xs uppercase tracking-[0.28em] font-semibold transition-colors"
+        className="btn-outline w-full mt-2"
       >
         {submitLabel}
       </button>
