@@ -300,14 +300,16 @@ function FounderStorySection({
 }
 
 function headlineNodes(headline: string, fallbackLines: string[]) {
-  if (headline.includes("\n")) return headline.split("\n");
-  if (headline.includes(" / ")) return headline.split(/\s*\/\s*/).map((p) => p.trim()).filter(Boolean);
-  if (/coast remembers it/i.test(headline)) return ["Cooking the way the", "coast remembers it."];
-  if (/quiet devotion/i.test(headline) && /to detail/i.test(headline)) return ["A Quiet Devotion", "to Detail"];
-  if (/attention/i.test(headline) && /generously/i.test(headline)) {
+  const value = headline.trim();
+  if (!value) return fallbackLines.length ? fallbackLines : [headline];
+  if (value.includes("\n")) return value.split("\n");
+  if (value.includes(" / ")) return value.split(/\s*\/\s*/).map((p) => p.trim()).filter(Boolean);
+  if (/coast remembers it/i.test(value)) return ["Cooking the way the", "coast remembers it."];
+  if (/quiet devotion/i.test(value) && /to detail/i.test(value)) return ["A Quiet Devotion", "to Detail"];
+  if (/attention/i.test(value) && /generously/i.test(value)) {
     return ['"A great meal is just attention,', 'given generously."'];
   }
-  return fallbackLines.length ? fallbackLines : [headline];
+  return [value];
 }
 
 function AboutPage() {
@@ -323,14 +325,17 @@ function AboutPage() {
   const heroTitleLines = headlineNodes(heroHeadline, ["A Quiet Devotion", "to Detail"]);
 
   const philosophyEyebrow = data?.philosophy.eyebrow || "Our Philosophy";
-  const philosophyHeadline = data?.philosophy.headline || "Cooking the way the coast remembers it.";
-  const philosophyLines = headlineNodes(philosophyHeadline, ["Cooking the way the", "coast remembers it."]);
-  const philosophyBody1 =
-    data?.philosophy.body1 ||
-    "We source quietly — small fishermen at first light, herbs from gardens we know by name, olive oil from a single grove on the Aegean. Nothing arrives in a box. Everything arrives with a story.";
-  const philosophyBody2 =
-    data?.philosophy.body2 ||
-    "The kitchen is led by a small team who believe that restraint is the highest form of generosity. We season with intent. We plate with patience. We let the produce speak.";
+  const philosophyHeadline =
+    data?.philosophy.headline || "To serve outstanding food in beautifully created spaces";
+  const philosophyLines = headlineNodes(philosophyHeadline, [
+    "To serve outstanding food in beautifully created spaces",
+  ]);
+  const philosophyBody1 = data
+    ? (data.philosophy.body1 ?? "").trim()
+    : "";
+  const philosophyBody2 = data
+    ? (data.philosophy.body2 ?? "").trim()
+    : "The kitchen is led by a small team who cook as if every plate will be remembered. Technique matters. Restraint matters more.";
   const philosophyImages =
     data?.philosophy.slides?.length
       ? data.philosophy.slides.map((slide, i) => ({
@@ -440,8 +445,14 @@ function AboutPage() {
                 </span>
               ))}
             </h2>
-            <p className="mt-7 text-[var(--ink-muted)] leading-[1.9] max-w-lg">{philosophyBody1}</p>
-            <p className="mt-5 text-[var(--ink-muted)] leading-[1.9] max-w-lg">{philosophyBody2}</p>
+            {philosophyBody1 ? (
+              <p className="mt-7 text-[var(--ink-muted)] leading-[1.9] max-w-lg">{philosophyBody1}</p>
+            ) : null}
+            {philosophyBody2 ? (
+              <p className={`${philosophyBody1 ? "mt-5" : "mt-7"} text-[var(--ink-muted)] leading-[1.9] max-w-lg`}>
+                {philosophyBody2}
+              </p>
+            ) : null}
           </Reveal>
         </div>
       </section>
