@@ -290,7 +290,17 @@ function MenuPage() {
 
           <div className="mt-16 text-center">
             {/* <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">All prices in INR, exclusive of taxes</p> */}
-            <ReserveTableLink className="btn-outline mt-8">Reserve a Table</ReserveTableLink>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+              <ReserveTableLink className="btn-outline">Reserve a Table</ReserveTableLink>
+              <a
+                href="https://airmenus.in/theoffwhitebarandgrill/order"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-outline"
+              >
+                Full Menu
+              </a>
+            </div>
           </div>
         </div>
       </section>
