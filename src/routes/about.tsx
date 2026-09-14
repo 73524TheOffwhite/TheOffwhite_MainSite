@@ -371,13 +371,12 @@ function AboutPage() {
     data?.founders.cards?.length
       ? data.founders.cards.map((card) => {
           const fallback = founderProfiles.find((p) => p.name === card.name);
-          // Prefer bundled local assets so CMS/media transforms cannot replace
-          // high-resolution portraits with lower-quality remote URLs.
+          // Prefer CMS portrait when present; keep bundled photo as fallback.
           return {
             name: card.name,
             role: card.role,
             paragraphs: card.paragraphs,
-            imageUrl: fallback?.imageUrl || card.imageUrl,
+            imageUrl: card.imageUrl || fallback?.imageUrl,
             mobileObjectPosition: fallback?.mobileObjectPosition,
             desktopObjectPosition: fallback?.desktopObjectPosition,
           };
@@ -400,8 +399,8 @@ function AboutPage() {
     data?.values.cards?.length
       ? data.values.cards.map((card, i) => ({
           num: String(i + 1).padStart(2, "0"),
-          title: i === 0 ? fallbackValues[0].title : i === 1 ? fallbackValues[1].title : card.title,
-          body: i === 0 ? fallbackValues[0].body : i === 1 ? fallbackValues[1].body : card.body,
+          title: card.title || fallbackValues[i % fallbackValues.length].title,
+          body: card.body || fallbackValues[i % fallbackValues.length].body,
         }))
       : fallbackValues;
 

@@ -98,7 +98,7 @@ function resolveMedia(media?: CmsMedia | null) {
   return mediaUrl(media?.path || media?.previewUrl);
 }
 
-async function fetchAboutCms(): Promise<AboutCms | null> {
+export async function fetchAboutCms(): Promise<AboutCms | null> {
   const rows = await supabaseFetch<
     Array<{
       hero_eyebrow: string | null;

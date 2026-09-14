@@ -5,17 +5,70 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import {
   founderProfiles,
   founderSlug,
-  getFounderBySlug,
-  getFounderNeighbors,
+  type FounderProfile,
 } from "@/data/founder-story";
+import { fetchAboutCms, type AboutCms } from "@/lib/about-cms";
 import { Eyebrow } from "@/components/Eyebrow";
 import { ReserveTableLink } from "@/components/ReserveTableLink";
 
+function mergeFounderFromCms(
+  slug: string,
+  cms: AboutCms | null,
+): FounderProfile | null {
+  const bundled = founderProfiles.find((p) => founderSlug(p.name) === slug) ?? null;
+  const cmsCard = cms?.founders.cards?.find((c) => founderSlug(c.name) === slug) ?? null;
+  if (!bundled && !cmsCard) return null;
+
+  const cmsParagraphs = (cmsCard?.paragraphs || []).map((p) => p.trim()).filter(Boolean);
+  const bundledParagraphs = bundled?.paragraphs || [];
+  const cmsLen = cmsParagraphs.join("").length;
+  const bundledLen = bundledParagraphs.join("").length;
+  // Prefer CMS story when it is at least as complete as the built-in bio.
+  // Keeps current long detail pages until admin stores the full text.
+  const paragraphs =
+    cmsParagraphs.length && cmsLen >= bundledLen
+      ? cmsParagraphs
+      : bundledParagraphs.length
+        ? bundledParagraphs
+        : cmsParagraphs;
+
+  return {
+    name: cmsCard?.name || bundled!.name,
+    role: cmsCard?.role || bundled!.role,
+    paragraphs,
+    imageUrl: cmsCard?.imageUrl || bundled?.imageUrl,
+    mobileObjectPosition: bundled?.mobileObjectPosition,
+    desktopObjectPosition: bundled?.desktopObjectPosition,
+  };
+}
+
+function founderListFromCms(cms: AboutCms | null): FounderProfile[] {
+  if (cms?.founders.cards?.length) {
+    return cms.founders.cards
+      .map((card) => mergeFounderFromCms(founderSlug(card.name), cms))
+      .filter((profile): profile is FounderProfile => Boolean(profile));
+  }
+  return founderProfiles;
+}
+
+function neighborsFor(slug: string, list: FounderProfile[]) {
+  const index = list.findIndex((profile) => founderSlug(profile.name) === slug);
+  if (index < 0) return { prev: null, next: null, index: -1, total: list.length };
+  return {
+    index,
+    total: list.length,
+    prev: index > 0 ? list[index - 1] : null,
+    next: index < list.length - 1 ? list[index + 1] : null,
+  };
+}
+
 export const Route = createFileRoute("/about_/$founderSlug")({
-  loader: ({ params }) => {
-    const profile = getFounderBySlug(params.founderSlug);
+  loader: async ({ params }) => {
+    const cms = await fetchAboutCms();
+    const list = founderListFromCms(cms);
+    const profile = mergeFounderFromCms(params.founderSlug, cms);
     if (!profile) throw notFound();
-    const neighbors = getFounderNeighbors(params.founderSlug);
+    const neighbors = neighborsFor(params.founderSlug, list);
     return { profile, neighbors };
   },
   head: ({ loaderData }) => {
@@ -248,7 +301,7 @@ function FounderDetailPage() {
         </motion.div>
 
         <p className="mt-10 text-center text-[11px] uppercase tracking-[0.2em] text-[var(--ink-muted)]">
-          {index + 1} of {founderProfiles.length}
+          {index + 1} of {neighbors.total}
         </p>
       </section>
     </div>
