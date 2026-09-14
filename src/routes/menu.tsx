@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
@@ -8,10 +8,8 @@ import { Reveal } from "@/components/Reveal";
 import { Eyebrow } from "@/components/Eyebrow";
 import dining from "@/assets/Gemini_Generated_Image_nwgy8znwgy8znwgy.jpg";
 import menuHeroMobile from "@/assets/hero_menu_image/menu-hero-mobile-04-kitchen-background.jpg";
-// import seabass from "@/assets/dish-seabass.jpg";
-// import octopus from "@/assets/dish-octopus.jpg";
-// import ravioli from "@/assets/dish-ravioli.jpg";
-// import spritz from "@/assets/dish-spritz.jpg";
+import { cmsSrc } from "@/lib/cms-src";
+import { useMenuCms } from "@/lib/menu-cms";
 
 export const Route = createFileRoute("/menu")({
   head: () => ({
@@ -22,113 +20,6 @@ export const Route = createFileRoute("/menu")({
   }),
   component: MenuPage,
 });
-
-// type Dish = {
-//   id: string;
-//   name: string;
-//   price: string;
-//   category: string;
-//   image: string;
-//   description: string;
-//   preparation: string;
-//   pairing: string;
-//   allergens: string;
-// };
-
-// const DISHES: Dish[] = [
-//   {
-//     id: "sea-bass",
-//     name: "Herb Crusted Sea Bass",
-//     price: "₹ 1,480",
-//     category: "Mains",
-//     image: seabass,
-//     description: "Wild-caught sea bass cloaked in a Mediterranean herb crust, set over braised fennel with a citrus beurre blanc.",
-//     preparation: "Pan-seared skin-side down until crisp, finished in the wood oven on a bed of fennel confit.",
-//     pairing: "Sancerre, dry Riesling, or our Garden Gimlet.",
-//     allergens: "Fish · Dairy",
-//   },
-//   {
-//     id: "octopus",
-//     name: "Grilled Octopus",
-//     price: "₹ 880",
-//     category: "Starters",
-//     image: octopus,
-//     description: "Slow-poached Spanish octopus, charred over open flame, with smoked paprika oil and warm chickpea.",
-//     preparation: "Poached in court bouillon for 90 minutes, then kissed by the grill for char.",
-//     pairing: "Albariño or a Smoked Old Fashioned.",
-//     allergens: "Mollusc · Legumes",
-//   },
-//   {
-//     id: "ravioli",
-//     name: "Truffle Ravioli",
-//     price: "₹ 1,180",
-//     category: "Mains",
-//     image: ravioli,
-//     description: "Hand-folded ravioli filled with wild mushrooms, parmesan, and shaved black truffle, finished in brown butter.",
-//     preparation: "Pasta rolled fresh each morning, simmered gently and dressed in foaming truffle butter.",
-//     pairing: "Barolo, aged Chardonnay, or a Saffron Negroni.",
-//     allergens: "Gluten · Dairy · Egg",
-//   },
-//   {
-//     id: "spritz",
-//     name: "Off White Spritz",
-//     price: "₹ 620",
-//     category: "Cocktails",
-//     image: spritz,
-//     description: "Our house spritz — elderflower, citrus oils, and prosecco over a single, slow-melting cube.",
-//     preparation: "Built over hand-cut ice with fresh citrus expression and a sprig of basil.",
-//     pairing: "A perfect aperitif before the burrata or octopus.",
-//     allergens: "Sulphites",
-//   },
-//   {
-//     id: "sea-bass-2",
-//     name: "Herb Crusted Sea Bass",
-//     price: "₹ 1,480",
-//     category: "Chef's Picks",
-//     image: seabass,
-//     description: "A second take on our signature — same crust, served with grilled stone fruit and saffron sauce.",
-//     preparation: "Pan-seared and rested under herb butter, plated with a smoked stone-fruit relish.",
-//     pairing: "Chenin Blanc, or a Mediterranean Mule.",
-//     allergens: "Fish · Dairy",
-//   },
-//   {
-//     id: "octopus-2",
-//     name: "Grilled Octopus",
-//     price: "₹ 920",
-//     category: "Chef's Picks",
-//     image: octopus,
-//     description: "Charred octopus tossed in a warm potato salad with capers, lemon, and Calabrian chilli oil.",
-//     preparation: "Tossed table-warm, dressed in chilli oil and finished with sea salt flakes.",
-//     pairing: "Vermentino or a crisp Pilsner.",
-//     allergens: "Mollusc",
-//   },
-//   {
-//     id: "ravioli-2",
-//     name: "Truffle Ravioli",
-//     price: "₹ 1,260",
-//     category: "Mains",
-//     image: ravioli,
-//     description: "Double-stuffed truffle ravioli with aged parmesan cream and a 63° quail egg.",
-//     preparation: "Each parcel hand-pleated; the yolk warmed gently to a silken finish.",
-//     pairing: "White Burgundy or a Smoked Old Fashioned.",
-//     allergens: "Gluten · Dairy · Egg",
-//   },
-//   {
-//     id: "margherita",
-//     name: "Wood-Fired Margherita",
-//     price: "₹ 720",
-//     category: "Mains",
-//     image: spritz,
-//     description: "San Marzano tomato, fior di latte, fresh basil — 90 seconds at 480°C.",
-//     preparation: "Naturally leavened 48-hour dough, fired in our domed wood oven.",
-//     pairing: "Chianti Classico or an icy Negroni Sbagliato.",
-//     allergens: "Gluten · Dairy",
-//   },
-// ];
-
-// const CATEGORIES = ["All", "Starters", "Mains", "Cocktails", "Chef's Picks"] as const;
-
-
 
 type Dish = {
   id: string;
@@ -142,10 +33,10 @@ const menuImages = import.meta.glob(
     eager: true,
     query: "?url",
     import: "default",
-  }
+  },
 ) as Record<string, string>;
 
-const DISHES: Dish[] = Object.entries(menuImages).map(([path, image]) => {
+const FALLBACK_DISHES: Dish[] = Object.entries(menuImages).map(([path, image]) => {
   const fileName = path.split("/").pop() ?? "";
 
   const name = fileName
@@ -162,20 +53,64 @@ const DISHES: Dish[] = Object.entries(menuImages).map(([path, image]) => {
   };
 });
 
-
-
-
-
-
+function HeroTitle({ headline }: { headline: string }) {
+  const lines = headline
+    .split(/\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  if (lines.length <= 1) return <>{headline}</>;
+  return (
+    <>
+      {lines.map((line, index) => (
+        <span key={`${line}-${index}`}>
+          {line}
+          {index < lines.length - 1 ? <br /> : null}
+        </span>
+      ))}
+    </>
+  );
+}
 
 function MenuPage() {
-  // const [active, setActive] = useState<(typeof CATEGORIES)[number]>("All");
-  // const [selected, setSelected] = useState<Dish | null>(null);
-
-  // const filtered = active === "All" ? DISHES : DISHES.filter((d) => d.category === active);
-
-
+  const { data, isPending } = useMenuCms();
   const [selected, setSelected] = useState<Dish | null>(null);
+
+  const localByFile = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const dish of FALLBACK_DISHES) map.set(dish.id, dish.image);
+    return map;
+  }, []);
+
+  const dishes = useMemo(() => {
+    const cmsDishes = data?.dishes;
+    if (!cmsDishes?.length) return FALLBACK_DISHES;
+    return cmsDishes
+      .map((dish) => {
+        const fileKey = dish.imageName || dish.id;
+        const bundled = localByFile.get(fileKey) || localByFile.get(dish.id);
+        const image = dish.imageUrl || bundled;
+        if (!image) return null;
+        return {
+          id: dish.id,
+          name: dish.name || FALLBACK_DISHES.find((d) => d.id === dish.id)?.name || dish.id,
+          image,
+        } satisfies Dish;
+      })
+      .filter((dish): dish is Dish => Boolean(dish));
+  }, [data?.dishes, localByFile]);
+
+  const heroEyebrow = data?.hero.eyebrow || "The Visual Menu";
+  const heroHeadline = data?.hero.headline || "Made slowly,\nserved generously.";
+  const heroDescription =
+    data?.hero.description ||
+    "Every plate, photographed and detailed. Tap any dish to read its full story.";
+  const heroCrumb = data?.hero.breadcrumb || "Menu";
+  const heroImage = cmsSrc(isPending, data?.hero.imageUrl, dining);
+  const heroMobileImage = cmsSrc(isPending, data?.hero.mobileImageUrl, menuHeroMobile);
+
+  const selectionEyebrow = data?.selection.eyebrow || "The Selection";
+  const selectionHeadline = data?.selection.headline || "Choose your chapter";
+  const selectionIntro = data?.selection.intro || "The heart of the table";
 
   useEffect(() => {
     if (selected) {
@@ -196,51 +131,24 @@ function MenuPage() {
   return (
     <>
       <PageHero
-        eyebrow="The Visual Menu"
-        title={<>Made slowly,<br />served generously.</>}
-        description="Every plate, photographed and detailed. Tap any dish to read its full story."
-        image={dining}
-        mobileImage={menuHeroMobile}
-        crumb="Menu"
+        eyebrow={heroEyebrow}
+        title={<HeroTitle headline={heroHeadline} />}
+        description={heroDescription}
+        image={heroImage || dining}
+        mobileImage={heroMobileImage || menuHeroMobile}
+        crumb={heroCrumb}
         imageClassName="object-[62%_center]"
       />
 
       <section className="bg-[var(--cream)] pt-20 lg:pt-28">
         <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
           <Reveal className="text-center">
-            <Eyebrow>The Selection</Eyebrow>
-            <h2 className="heading-section mt-4 text-[clamp(2rem,3.6vw,3rem)] text-[var(--ink)]">Choose your chapter</h2>
-            <p className="mt-3 italic text-[var(--ink-muted)] font-serif">The heart of the table</p>
+            <Eyebrow>{selectionEyebrow}</Eyebrow>
+            <h2 className="heading-section mt-4 text-[clamp(2rem,3.6vw,3rem)] text-[var(--ink)]">
+              {selectionHeadline}
+            </h2>
+            <p className="mt-3 italic text-[var(--ink-muted)] font-serif">{selectionIntro}</p>
           </Reveal>
-
-          {/* <div className="mt-10 flex flex-wrap justify-center gap-2 sm:gap-3">
-            {CATEGORIES.map((c) => {
-              const isActive = c === active;
-              return (
-                <button
-                  key={c}
-                  onClick={() => setActive(c)}
-                  className={`relative px-5 sm:px-7 py-3 text-[11px] uppercase tracking-[0.24em] font-semibold transition-colors ${
-                    isActive ? "text-[var(--cream)]" : "text-[var(--ink-muted)] hover:text-[var(--ink)]"
-                  }`}
-                >
-                  {isActive && (
-                    <motion.span
-                      layoutId="menu-pill"
-                      className="absolute inset-0 bg-[var(--cocoa)] rounded-sm"
-                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    />
-                  )}
-                  <span className="relative">{c}</span>
-                </button>
-              );
-            })}
-          </div> */}
-
-
-
-
-
         </div>
       </section>
 
@@ -251,7 +159,7 @@ function MenuPage() {
             className="grid grid-cols-2 gap-6 sm:gap-8 md:grid-cols-3 lg:grid-cols-4"
           >
             <AnimatePresence mode="popLayout">
-              {DISHES.map((d, i) => (
+              {dishes.map((d, i) => (
                 <motion.button
                   layout
                   key={d.id}
@@ -281,7 +189,6 @@ function MenuPage() {
                   </div>
                   <div className="mt-5">
                     <h3 className="font-serif text-lg sm:text-xl text-[var(--ink)] leading-snug">{d.name}</h3>
-                    {/* <p className="mt-1 text-[13px] text-[var(--cocoa)] tabular-nums">{d.price}</p> */}
                   </div>
                 </motion.button>
               ))}
@@ -289,7 +196,6 @@ function MenuPage() {
           </motion.div>
 
           <div className="mt-16 text-center">
-            {/* <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">All prices in INR, exclusive of taxes</p> */}
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
               <ReserveTableLink className="btn-outline">Reserve a Table</ReserveTableLink>
               <a
@@ -355,32 +261,25 @@ function MenuPage() {
                 </div>
 
                 <div className="p-7 sm:p-10 lg:p-12 flex flex-col">
-                  {/* <Eyebrow>{selected.category}</Eyebrow> */}
                   <Eyebrow>The Off White</Eyebrow>
                   <h3 className="mt-3 font-serif text-3xl sm:text-4xl text-[var(--ink)] leading-tight">
                     {selected.name}
                   </h3>
                   <div className="mt-3 flex items-center gap-3">
                     <span className="h-px w-10 bg-[var(--gold)]" />
-                    {/* <span className="text-[var(--cocoa)] font-medium tabular-nums">{selected.price}</span> */}
                   </div>
-
-                  {/* <p className="mt-6 text-[15px] leading-[1.85] text-[var(--ink-muted)]">{selected.description}</p> */}
 
                   <div className="mt-7 space-y-5 text-sm">
                     <div>
                       <p className="text-[10px] uppercase tracking-[0.28em] text-[var(--cocoa)] font-semibold"></p>
-                      {/* <p className="mt-1.5 text-[var(--ink)]/85 leading-relaxed">{selected.preparation}</p> */}
                     </div>
                     <div className="h-px bg-[var(--border)]" />
                     <div>
                       <p className="text-[10px] uppercase tracking-[0.28em] text-[var(--cocoa)] font-semibold"></p>
-                      {/* <p className="mt-1.5 text-[var(--ink)]/85 leading-relaxed">{selected.pairing}</p> */}
                     </div>
                     <div className="h-px bg-[var(--border)]" />
                     <div>
                       <p className="text-[10px] uppercase tracking-[0.28em] text-[var(--cocoa)] font-semibold"></p>
-                      {/* <p className="mt-1.5 text-[var(--ink)]/85 leading-relaxed">{selected.allergens}</p> */}
                     </div>
                   </div>
 
