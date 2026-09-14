@@ -19,6 +19,21 @@ export type Level4Cms = {
     paragraphs: string[];
     features: Array<{ id: string; label: string }>;
   };
+  linger: {
+    eyebrow: string;
+    headline: string;
+    body: string;
+    moments: Array<{ id: string; label: string; alt: string; imageUrl?: string }>;
+  };
+  evening: {
+    headline: string;
+    body: string;
+    tags: string[];
+    cardEyebrow: string;
+    cardBody: string;
+    ctaLabel: string;
+    signOff: string;
+  };
 };
 
 type CmsMedia = { name?: string; path?: string; previewUrl?: string };
@@ -38,6 +53,21 @@ type Level4Sections = {
     intro?: string;
     paragraphs?: string[];
     features?: Array<{ id: string; label: string }>;
+  };
+  linger?: {
+    eyebrow?: string;
+    headline?: string;
+    body?: string;
+    moments?: Array<{ id: string; label: string; alt: string; image?: CmsMedia }>;
+  };
+  evening?: {
+    headline?: string;
+    body?: string;
+    tags?: string[];
+    cardEyebrow?: string;
+    cardBody?: string;
+    ctaLabel?: string;
+    signOff?: string;
   };
 };
 
@@ -121,6 +151,32 @@ async function fetchLevel4Cms(): Promise<Level4Cms | null> {
       intro: sections.story?.intro || "",
       paragraphs: sections.story?.paragraphs || [],
       features: sections.story?.features || [],
+    },
+    linger: {
+      eyebrow: sections.linger?.eyebrow || "Inside Level 4",
+      headline: sections.linger?.headline || "Linger a little longer",
+      body: sections.linger?.body || "Soft light, woven shadows, and rooms that invite you to stay.",
+      moments: (sections.linger?.moments || []).map((moment) => ({
+        id: moment.id,
+        label: moment.label,
+        alt: moment.alt,
+        imageUrl: resolveMedia(moment.image),
+      })),
+    },
+    evening: {
+      headline: sections.evening?.headline || "The evening\nis waiting.",
+      body:
+        sections.evening?.body ||
+        "Slow dinners. Soft light. Conversations that deserve time — and a table of their own.",
+      tags: sections.evening?.tags?.length
+        ? sections.evening.tags
+        : ["Dinner", "Cocktails", "Conversation"],
+      cardEyebrow: sections.evening?.cardEyebrow || "Reserve your evening",
+      cardBody:
+        sections.evening?.cardBody ||
+        "Join us on Level 4 for an unhurried night — crafted plates, considered pours, and company that stays with you.",
+      ctaLabel: sections.evening?.ctaLabel || "Reserve a Table",
+      signOff: sections.evening?.signOff || "We look forward to hosting you.",
     },
   };
 }
