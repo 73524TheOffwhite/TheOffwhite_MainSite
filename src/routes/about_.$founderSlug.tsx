@@ -80,15 +80,15 @@ export const Route = createFileRoute("/about_/$founderSlug")({
         {
           name: "description",
           content: role
-            ? `${name}, ${role} at The Off White Bar & Grill in Navelim, South Goa.`
-            : `Meet ${name} of The Off White Bar & Grill.`,
+            ? `${name}, ${role} at The Off White Bar & Grill — fine dining Navelim Goa, Margao, South Goa.`
+            : `Meet ${name} of The Off White Bar & Grill in Navelim, Margao.`,
         },
-        { property: "og:title", content: `${name} — The Off White` },
+        { property: "og:title", content: `${name} — The Off White | Navelim, Margao` },
         {
           property: "og:description",
           content: role
-            ? `${name}, ${role} at The Off White Bar & Grill.`
-            : `Meet ${name} of The Off White Bar & Grill.`,
+            ? `${name}, ${role} at The Off White Bar & Grill in Navelim, Margao.`
+            : `Meet ${name} of The Off White Bar & Grill in Navelim, Margao.`,
         },
       ],
     };

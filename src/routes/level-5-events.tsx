@@ -21,10 +21,24 @@ import spaceHero from "@/assets/space-hero.jpg";
 export const Route = createFileRoute("/level-5-events")({
   head: () => ({
     meta: [
-      { title: "Level 5 — Events & Parties | The Off White" },
-      { name: "description", content: "Grand. Airy. Unforgettable. Level 5 at The Off White transforms for galas, weddings, private dinners and celebrations." },
-      { property: "og:title", content: "Level 5 — Events & Parties" },
-      { property: "og:description", content: "Grand. Airy. Unforgettable." },
+      {
+        title:
+          "Level 5 Events Venue South Goa | The Off White Navelim Margao",
+      },
+      {
+        name: "description",
+        content:
+          "Events venue South Goa at The Off White Level 5 — galas, weddings, private dinners and celebrations in Navelim, Margao.",
+      },
+      {
+        property: "og:title",
+        content: "Level 5 — Events Venue South Goa | The Off White",
+      },
+      {
+        property: "og:description",
+        content:
+          "Grand. Airy. Unforgettable. Private events in Navelim, Margao.",
+      },
     ],
   }),
   component: Level5Page,

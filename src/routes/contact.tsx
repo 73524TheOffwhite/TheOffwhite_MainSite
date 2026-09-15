@@ -21,16 +21,23 @@ import contactEnquiryLeaf from "@/assets/contact-enquiry-leaf.png";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact Us — The Off White" },
+      {
+        title:
+          "Contact — Fine Dining Navelim Goa | The Off White Margao",
+      },
       {
         name: "description",
         content:
-          "Reach out for reservations, events or enquiries at The Off White Bar & Grill in Navelim, Goa.",
+          "Contact The Off White Bar & Grill in Navelim, Margao for reservations, events venue South Goa enquiries, or fine dining bookings.",
       },
-      { property: "og:title", content: "Contact Us — The Off White" },
+      {
+        property: "og:title",
+        content: "Contact — The Off White | Navelim, Margao",
+      },
       {
         property: "og:description",
-        content: "We'd love to hear from you. Reserve a table or plan your evening with us.",
+        content:
+          "Reach us in Navelim, South Goa — reserve a table or plan your event.",
       },
     ],
   }),

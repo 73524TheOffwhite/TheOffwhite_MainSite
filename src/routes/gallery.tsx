@@ -54,10 +54,14 @@ export const Route = createFileRoute("/gallery")({
   }),
   head: () => ({
     meta: [
-      { title: "Gallery — The Off White" },
-      { name: "description", content: "Moments, captured. A visual diary of light, plates and quiet corners at The Off White." },
-      { property: "og:title", content: "Gallery — The Off White" },
-      { property: "og:description", content: "Moments, captured." },
+      { title: "Gallery — The Off White | Fine Dining Navelim Goa" },
+      {
+        name: "description",
+        content:
+          "Moments from The Off White Bar & Grill in Navelim, Margao — plates, light and quiet corners at South Goa’s fine dining destination.",
+      },
+      { property: "og:title", content: "Gallery — The Off White | Navelim, Margao" },
+      { property: "og:description", content: "Moments, captured — Navelim, South Goa." },
     ],
   }),
   component: GalleryPage,

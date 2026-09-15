@@ -31,13 +31,13 @@ import { useTestimonials } from "@/lib/testimonials";
 export const Route = createFileRoute("/the-space")({
   head: () => ({
     meta: [
-      { title: "The Space — The Off White" },
+      { title: "The Space — Fine Dining Venue Navelim Goa | The Off White" },
       {
         name: "description",
         content:
-          "Every curve, every arch and every material reflects a deep respect for nature, craft and calm.",
+          "Architecture and calm at The Off White in Navelim, Margao — every curve and arch designed for fine dining South Goa.",
       },
-      { property: "og:title", content: "The Space — The Off White" },
+      { property: "og:title", content: "The Space — The Off White | Navelim, Margao" },
       {
         property: "og:description",
         content: "Designed to be experienced. Global architecture and soul in Navelim, South Goa.",

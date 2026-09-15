@@ -35,10 +35,17 @@ const fallbackKitchenImages = [
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About — The Off White" },
-      { name: "description", content: "The story, philosophy and people behind The Off White Bar & Grill in Navelim, South Goa." },
-      { property: "og:title", content: "About — The Off White" },
-      { property: "og:description", content: "Where architecture meets cuisine. Our story." },
+      { title: "About — Fine Dining Navelim Goa | The Off White Margao" },
+      {
+        name: "description",
+        content:
+          "The story, philosophy and people behind The Off White Bar & Grill — fine dining Navelim Goa and a destination restaurant in Margao, South Goa.",
+      },
+      { property: "og:title", content: "About — The Off White | Navelim, Margao" },
+      {
+        property: "og:description",
+        content: "Where architecture meets cuisine. Our story in Navelim, South Goa.",
+      },
     ],
   }),
   component: AboutPage,

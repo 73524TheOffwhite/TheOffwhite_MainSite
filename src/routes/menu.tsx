@@ -14,8 +14,12 @@ import { useMenuCms } from "@/lib/menu-cms";
 export const Route = createFileRoute("/menu")({
   head: () => ({
     meta: [
-      { title: "Menu — The Off White" },
-      { name: "description", content: "An illustrated menu of signature plates, with full detail on every dish." },
+      { title: "Menu — Fine Dining Navelim Goa | The Off White Margao" },
+      {
+        name: "description",
+        content:
+          "Signature plates at The Off White Bar & Grill — best restaurant Margao area menu with full detail on every dish in Navelim, South Goa.",
+      },
     ],
   }),
   component: MenuPage,

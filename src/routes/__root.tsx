@@ -17,6 +17,7 @@ import { Footer } from "@/components/sections/Footer";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 import { GalleryImageWarmup } from "@/components/GalleryImageWarmup";
 import { installClickTracker, trackPageView } from "@/lib/site-analytics";
+import { RESTAURANT_JSON_LD } from "@/lib/restaurant-json-ld";
 
 function NotFoundComponent() {
   return (
@@ -85,12 +86,28 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "format-detection", content: "telephone=no" },
-      { title: "The Off White — Global Fine Dining" },
-      { name: "description", content: "Fine dining, crafted cocktails and Global soul at The Off White Bar & Grill in Navelim, South Goa." },
+      {
+        title:
+          "The Off White — Fine Dining Navelim Goa | Best Restaurant Margao",
+      },
+      {
+        name: "description",
+        content:
+          "Fine dining Navelim Goa and events venue South Goa at The Off White Bar & Grill — crafted cocktails, Level 4 dining and Level 5 celebrations near Margao.",
+      },
       { name: "author", content: "The Off White" },
-      { property: "og:title", content: "The Off White — Global Fine Dining" },
-      { property: "og:description", content: "Where architecture meets cuisine." },
+      {
+        property: "og:title",
+        content:
+          "The Off White — Fine Dining Navelim Goa | Best Restaurant Margao",
+      },
+      {
+        property: "og:description",
+        content:
+          "Where architecture meets cuisine. Fine dining and events in Navelim, Margao, South Goa.",
+      },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://theoffwhite.com/" },
       { name: "twitter:card", content: "summary" },
     ],
     links: [
@@ -112,6 +129,12 @@ function RootShell({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(RESTAURANT_JSON_LD),
+          }}
+        />
       </head>
       <body>
         {children}

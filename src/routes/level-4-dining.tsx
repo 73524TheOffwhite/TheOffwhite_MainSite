@@ -17,16 +17,23 @@ import galleryL4Bar from "../offwhite images/ChatGPT Image Jun 19, 2026, 04_49_4
 export const Route = createFileRoute("/level-4-dining")({
   head: () => ({
     meta: [
-      { title: "Level 4 — Fine Dining & Bar | The Off White" },
+      {
+        title:
+          "Level 4 Fine Dining Navelim Goa | The Off White Margao",
+      },
       {
         name: "description",
         content:
-          "Level 4 at The Off White — slow dinners, crafted cocktails and conversations that deserve time.",
+          "Level 4 fine dining Navelim Goa at The Off White — slow dinners, crafted cocktails and conversations near Margao, South Goa.",
       },
-      { property: "og:title", content: "Level 4 — Fine Dining & Bar" },
+      {
+        property: "og:title",
+        content: "Level 4 — Fine Dining & Bar | Navelim, Margao",
+      },
       {
         property: "og:description",
-        content: "For conversations that deserve time.",
+        content:
+          "Fine dining and bar at The Off White in Navelim, South Goa.",
       },
     ],
   }),
